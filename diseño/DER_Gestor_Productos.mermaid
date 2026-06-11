@@ -1,0 +1,51 @@
+erDiagram
+  CATEGORIA {
+    int id PK
+    string nombre
+  }
+
+  PRODUCTO {
+    int id PK
+    string nombre
+    text descripcion
+    decimal precio_base
+    int categoria_id FK
+    bool activo
+  }
+
+  ATRIBUTO {
+    int id PK
+    string nombre
+  }
+
+  VALOR_ATRIBUTO {
+    int id PK
+    int atributo_id FK
+    string valor
+  }
+
+  PRODUCTO_ATRIBUTO {
+    int producto_id FK
+    int atributo_id FK
+  }
+
+  VARIANTE_PRODUCTO {
+    int id PK
+    int producto_id FK
+    string sku
+    decimal precio_extra
+    int stock
+  }
+
+  VARIANTE_VALOR {
+    int variante_id FK
+    int valor_atributo_id FK
+  }
+
+  CATEGORIA ||--o{ PRODUCTO : "tiene"
+  PRODUCTO ||--o{ PRODUCTO_ATRIBUTO : "define"
+  ATRIBUTO ||--o{ PRODUCTO_ATRIBUTO : "se usa en"
+  ATRIBUTO ||--o{ VALOR_ATRIBUTO : "tiene"
+  PRODUCTO ||--o{ VARIANTE_PRODUCTO : "genera"
+  VARIANTE_PRODUCTO ||--o{ VARIANTE_VALOR : "compuesta por"
+  VALOR_ATRIBUTO ||--o{ VARIANTE_VALOR : "define"
