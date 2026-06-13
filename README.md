@@ -30,3 +30,5 @@
 - Hay atributos realmente generales? por ejemplo nombre del producto, descripcion, color, tamaño?
 
 
+#### pie de pagina
+
