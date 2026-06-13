@@ -2,7 +2,7 @@
 
 ## Proyecto full-stack para Taller 4
 
-### Integrantes del grupete!!!!!!!!!!!
+### Integrantes del grup
 
 - Andre Busnelli
 - Manuela Cepeda
