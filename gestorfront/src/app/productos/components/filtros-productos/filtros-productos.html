@@ -1,0 +1,81 @@
+<div class="filtros-container">
+  <h3 class="filtros-titulo">Filtros de Búsqueda</h3>
+
+  <!-- Búsqueda Libre -->
+  <div class="filtro-grupo">
+    <label for="buscar">Buscar producto o SKU</label>
+    <!-- Directiva pInputText aplicada a un input nativo -->
+    <input pInputText id="buscar" [(ngModel)]="busqueda" placeholder="Ej: Campera térmica..." class="w-full" />
+  </div>
+
+  <!-- Departamento -->
+  <div class="filtro-grupo">
+    <label for="departamento">Departamento</label>
+    <p-select
+      [options]="departamentos"
+      [(ngModel)]="departamentoSeleccionado"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Seleccionar..."
+      styleClass="w-full">
+    </p-select>
+  </div>
+
+  <!-- Rango de Precios -->
+  <div class="filtro-grupo">
+    <label>Rango de Precio</label>
+    <div class="rango-precio">
+      <!-- p-inputNumber permite formatear monedas automáticamente -->
+      <p-inputNumber
+        [(ngModel)]="precioMin"
+        placeholder="Mín ($)"
+        mode="currency"
+        currency="ARS"
+        locale="es-AR">
+      </p-inputNumber>
+      <span>-</span>
+      <p-inputNumber
+        [(ngModel)]="precioMax"
+        placeholder="Máx ($)"
+        mode="currency"
+        currency="ARS"
+        locale="es-AR">
+      </p-inputNumber>
+    </div>
+  </div>
+
+  <!-- Filtro de Stock (Checkbox) -->
+  <div class="filtro-grupo checkboxes">
+    <div class="checkbox-item">
+      <p-checkbox [(ngModel)]="soloConStock" [binary]="true" inputId="stock"></p-checkbox>
+      <label for="stock">Solo productos con stock</label>
+    </div>
+  </div>
+
+  <!-- Ordenamiento -->
+  <div class="filtro-grupo">
+    <label for="ordenar">Ordenar por</label>
+    <p-select
+      [options]="opcionesOrden"
+      [(ngModel)]="ordenSeleccionado"
+      optionLabel="label"
+      optionValue="value"
+      styleClass="w-full">
+    </p-select>
+  </div>
+
+  <!-- Agrupar por -->
+  <div class="filtro-grupo">
+    <label for="agrupar">Agrupar por</label>
+    <p-select
+      [options]="opcionesAgrupacion"
+      [(ngModel)]="agrupacionSeleccionada"
+      optionLabel="label"
+      optionValue="value"
+      styleClass="w-full">
+    </p-select>
+  </div>
+
+  <button class="btn-secundario">Limpiar Filtros</button>
+</div>
+

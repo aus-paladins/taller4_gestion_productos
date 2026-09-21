@@ -1,0 +1,23 @@
+@use "sass:color";
+
+.dashboard-container {
+  display: flex; // Activa el modelo Flexbox
+  height: 100vh;
+  // background-color: transparentize(#9A41F2, 0.95);
+  background-color: color.adjust(#9A41F2, $alpha: -0.95);
+}
+
+.dashboard-sidebar {
+  width: 280px;
+  border-right: 1px solid #e2e8f0;
+  padding: 1.25rem;
+  // background-color: transparentize(#9C41D9, 0.9);
+  background-color: color.adjust(#9C41D9, $alpha: -0.9);
+  overflow-y: auto; // Agrega scroll independiente al panel si los filtros exceden la altura
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto; // Agrega scroll independiente a la tabla si es muy larga
+}
