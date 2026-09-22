@@ -1,3 +1,4 @@
+@if (!esAltaProducto) { <!-- Este condicional es para que no se muestre la tabla cuando se está dando de alta un producto -->
 <div class="dashboard-container">
 
   <!-- Barra lateral (Filtros) -->
@@ -11,5 +12,6 @@
   </main>
 
 </div>
+}
 
 <router-outlet />

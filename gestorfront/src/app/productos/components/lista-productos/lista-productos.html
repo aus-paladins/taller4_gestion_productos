@@ -4,7 +4,6 @@
       <h2>Inventario General</h2>
       <p class="subtitulo">Gestiona tus productos y variantes</p>
     </div>
-    <!-- Por ahora este botón es ilustrativo, luego lo conectaremos al componente de alta -->
     <!--
     Usamos <p-button>.
       - label: el texto del botón.
@@ -14,7 +13,8 @@
     <p-button
       label="Nuevo Producto"
       icon="pi pi-plus"
-      styleClass="btn-nuevo-producto">
+      styleClass="btn-nuevo-producto"
+      (onClick)="nuevoProducto()">
     </p-button>
   </header>
 

@@ -1,0 +1,179 @@
+<div class="alta-producto">
+
+  <div class="form-header">
+    <h2>Alta de producto</h2>
+    <p>Ingrese los datos del nuevo producto.</p>
+  </div>
+
+  @if (errorCategorias) {
+    <p-message
+      severity="error"
+      variant="simple"
+      size="small"
+    >
+      No se pudieron cargar las categorías.
+    </p-message>
+  }
+
+  @if (errorCreacion) {
+    <p-message
+      severity="error"
+      variant="simple"
+      size="small"
+    >
+      No se pudo crear el producto.
+    </p-message>
+  }
+
+  <form
+    [formGroup]="productoForm"
+    (ngSubmit)="crearProducto()"
+  >
+
+    <div class="campo">
+      <label for="nombre">Nombre</label>
+
+      <input
+        pInputText
+        id="nombre"
+        type="text"
+        formControlName="nombre"
+        placeholder="Nombre del producto"
+        fluid
+        [invalid]="esInvalido('nombre')"
+      />
+
+      @if (esInvalido('nombre')) {
+        <p-message
+          severity="error"
+          variant="simple"
+          size="small"
+        >
+          El nombre es obligatorio.
+        </p-message>
+      }
+    </div>
+
+
+    <div class="campo">
+      <label for="description">Descripción</label>
+
+      <input
+        pInputText
+        id="description"
+        type="text"
+        formControlName="description"
+        placeholder="Descripción del producto"
+        fluid
+        [invalid]="esInvalido('description')"
+      />
+
+      @if (esInvalido('description')) {
+        <p-message
+          severity="error"
+          variant="simple"
+          size="small"
+        >
+          La descripción es obligatoria.
+        </p-message>
+      }
+    </div>
+
+
+    <div class="campo">
+      <label for="precioBase">Precio base</label>
+
+      <p-inputnumber
+        inputId="precioBase"
+        formControlName="precioBase"
+        mode="decimal"
+        [min]="0"
+        [minFractionDigits]="2"
+        [maxFractionDigits]="2"
+        fluid
+        [invalid]="esInvalido('precioBase')"
+      />
+
+      @if (esInvalido('precioBase')) {
+        <p-message
+          severity="error"
+          variant="simple"
+          size="small"
+        >
+          El precio debe ser mayor o igual a 0.
+        </p-message>
+      }
+    </div>
+
+
+    <div class="campo">
+      <label for="categoria">Categoría</label>
+
+      <p-select
+        inputId="categoria"
+        formControlName="categoriaId"
+        [options]="categorias"
+        optionLabel="nombre"
+        optionValue="id"
+        placeholder="Seleccione una categoría"
+        fluid
+        [invalid]="esInvalido('categoriaId')"
+      />
+
+      @if (esInvalido('categoriaId')) {
+        <p-message
+          severity="error"
+          variant="simple"
+          size="small"
+        >
+          Debe seleccionar una categoría.
+        </p-message>
+      }
+    </div>
+
+
+    <div class="campo-checkbox">
+      <label>
+        <input
+          type="checkbox"
+          formControlName="activo"
+        />
+
+        Producto activo
+      </label>
+    </div>
+
+
+    <div class="acciones">
+
+      <p-button
+        type="submit"
+        label="Alta"
+        icon="pi pi-check"
+      />
+
+      <p-button
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="cancelar()"
+      />
+
+    </div>
+    
+    @if (productoCreado) {
+      <p-message
+        severity="success"
+        variant="simple"
+        size="small"
+        styleClass="mensaje-exito"
+      >
+        Producto creado exitosamente
+      </p-message>
+    }
+
+  </form>
+
+</div>

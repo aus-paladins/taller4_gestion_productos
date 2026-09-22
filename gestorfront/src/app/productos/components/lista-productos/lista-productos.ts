@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
 
@@ -13,6 +14,9 @@ import { CurrencyPipe } from '@angular/common';
 })
 export class ListaProductos {
   // Lista de datos simulando lo que vendría del backend
+
+  private router = inject(Router);
+
   productos = [
     {
       sku: 'CMP-T-L-NG',
@@ -29,4 +33,9 @@ export class ListaProductos {
       precio: 120000
     }
   ];
+
+    nuevoProducto(): void {
+    this.router.navigate(['/productos/nuevo']);
+  }
+  
 }

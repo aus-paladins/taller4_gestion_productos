@@ -17,7 +17,7 @@ public class JwtProvider {
 
     private final long expirationMs;
 
-    public JwtProvider(@Value("${JWT_SECRET:changeit}") String secret,
+    public JwtProvider(@Value("${JWT_SECRET:esta-es-una-clave-secreta-de-al-menos-32-caracteres}") String secret, //No levantaba el back
             @Value("${jwt.expiration:3600000}") long expirationMs) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMs = expirationMs;
