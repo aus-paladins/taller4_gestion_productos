@@ -1,7 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
+
+import { VarianteListado } from '../../models/producto.model';
+import { ProductosService } from '../../services/productos.service';
 
 @Component({
   selector: 'app-lista-productos',
@@ -12,30 +15,38 @@ import { CurrencyPipe } from '@angular/common';
   templateUrl: './lista-productos.html',
   styleUrl: './lista-productos.scss',
 })
-export class ListaProductos {
-  // Lista de datos simulando lo que vendría del backend
+export class ListaProductos implements OnInit {
 
   private router = inject(Router);
+  private productosService = inject(ProductosService);
 
-  productos = [
-    {
-      sku: 'CMP-T-L-NG',
-      nombre: 'Campera Térmica',
-      atributos: ['Talle L', 'Negro'],
-      stock: 15,
-      precio: 120000
-    },
-    {
-      sku: 'CMP-T-M-AZ',
-      nombre: 'Campera Térmica',
-      atributos: ['Talle M', 'Azul'],
-      stock: 2,
-      precio: 120000
-    }
-  ];
+  productos: VarianteListado[] = [];
+  cargando = false;
+  error = false;
 
-    nuevoProducto(): void {
+  ngOnInit(): void {
+    this.cargarProductos();
+  }
+
+  cargarProductos(): void {
+    this.cargando = true;
+    this.error = false;
+
+    this.productosService.obtenerVariantesListado().subscribe({
+      next: (productos) => {
+        this.productos = productos;
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar productos:', error);
+        this.error = true;
+        this.cargando = false;
+      }
+    });
+  }
+
+  nuevoProducto(): void {
     this.router.navigate(['/productos/nuevo']);
   }
-  
+
 }

@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 import {
   Categoria,
   ProductoRequest,
-  ProductoResponse
+  ProductoResponse,
+  VarianteListado
 } from '../models/producto.model';
 
 @Injectable({
@@ -27,6 +28,12 @@ export class ProductosService {
     return this.http.post<ProductoResponse>(
       `${this.apiUrl}/productos`,
       producto
+    );
+  }
+
+  obtenerVariantesListado(): Observable<VarianteListado[]> {
+    return this.http.get<VarianteListado[]>(
+      `${this.apiUrl}/variantes/listado`
     );
   }
 }

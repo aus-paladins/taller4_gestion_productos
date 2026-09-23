@@ -1,5 +1,6 @@
 package aus.t4.paladins.gestorback.controller;
 
+import aus.t4.paladins.gestorback.dto.VarianteListadoDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoRequestDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoResponseDTO;
 import aus.t4.paladins.gestorback.service.IVarianteProductoService;
@@ -23,6 +24,12 @@ public class VarianteProductoController {
   @GetMapping
   public List<VarianteProductoResponseDTO> findAll() {
     return service.findAll();
+  }
+
+  // Endpoint "de lectura directa" para lista-productos en Angular
+  @GetMapping("/listado")
+  public List<VarianteListadoDTO> findAllParaListado() {
+    return service.findAllParaListado();
   }
 
   @GetMapping("/{id}")

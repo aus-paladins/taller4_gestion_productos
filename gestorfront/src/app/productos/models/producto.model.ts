@@ -20,3 +20,13 @@ export interface ProductoResponse {
   categoriaId: number;
   categoriaNombre: string;
 }
+
+// Coincide 1 a 1 con VarianteListadoDTO del back (GET /api/variantes/listado)
+export interface VarianteListado {
+  id: number;
+  sku: string;
+  nombre: string;
+  atributos: string[];
+  stock: number;
+  precio: number;
+}

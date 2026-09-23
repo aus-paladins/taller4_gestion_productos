@@ -37,8 +37,17 @@
           </tr>
         </thead>
         <tbody>
+        @if (cargando) {
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem;">Cargando productos...</td>
+          </tr>
+        } @else if (error) {
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem;">No se pudieron cargar los productos. ¿Está corriendo el backend?</td>
+          </tr>
+        } @else {
         <!-- Bucle principal para iterar sobre la lista de productos -->
-        @for (producto of productos; track producto.sku) {
+        @for (producto of productos; track producto.id) {
           <tr>
             <td class="sku">{{ producto.sku }}</td>
             <td class="nombre">{{ producto.nombre }}</td>
@@ -69,6 +78,7 @@
           <tr>
             <td colspan="6" style="text-align: center; padding: 2rem;">No hay productos registrados en esta categoría.</td>
           </tr>
+        }
         }
         </tbody>
       </table>

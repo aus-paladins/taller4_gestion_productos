@@ -1,5 +1,6 @@
 package aus.t4.paladins.gestorback.service;
 
+import aus.t4.paladins.gestorback.dto.VarianteListadoDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoRequestDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoResponseDTO;
 import aus.t4.paladins.gestorback.mapper.VarianteProductoMapper;
@@ -36,6 +37,14 @@ public class VarianteProductoService implements IVarianteProductoService {
     return repository.findAll()
         .stream()
         .map(VarianteProductoMapper::toDTO)
+        .toList();
+  }
+
+  @Override
+  public List<VarianteListadoDTO> findAllParaListado() {
+    return repository.findAllForListado()
+        .stream()
+        .map(VarianteProductoMapper::toListadoDTO)
         .toList();
   }
 
