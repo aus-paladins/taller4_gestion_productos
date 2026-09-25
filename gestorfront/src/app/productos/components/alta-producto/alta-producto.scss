@@ -58,15 +58,11 @@ form {
   margin-top: 1rem;
 }
 
-::ng-deep .mensaje-exito {
+.mensaje-exito {
   display: flex;
   justify-content: center;
   width: 100%;
   margin-top: 1.25rem;
-}
-::ng-deep .mensaje-exito .p-message-text {
-  font-size: 1.30rem;
-  font-weight: 600;
 }
 
 .seccion-formulario {

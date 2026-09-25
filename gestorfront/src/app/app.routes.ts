@@ -5,5 +5,11 @@ export const routes: Routes = [
   {
     path: 'productos/nuevo',
     component: AltaProducto
+  },
+
+  {
+    path: 'productos/editar/:productoId/:varianteId',
+    component: AltaProducto
   }
+
 ];

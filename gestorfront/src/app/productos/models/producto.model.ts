@@ -27,6 +27,7 @@ export interface ProductoResponse {
   activo: boolean;
   categoriaId: number;
   categoriaNombre: string;
+  atributoIds: number[];
 }
 
 export interface VarianteProductoResponse {
@@ -49,6 +50,7 @@ export interface VarianteProductoRequest {
 
 export interface VarianteListado {
   id: number;
+  productoId: number;
   sku: string;
   nombre: string;
   atributos: string[];

@@ -68,4 +68,29 @@ export class ProductosService {
       `${this.apiUrl}/valores-atributo`
     );
 }
+
+obtenerProducto(id: number): Observable<ProductoResponse> {
+  return this.http.get<ProductoResponse>(
+    `${this.apiUrl}/productos/${id}`
+  );
+}
+
+obtenerVariante(id: number): Observable<VarianteProductoResponse> {
+  return this.http.get<VarianteProductoResponse>(
+    `${this.apiUrl}/variantes/${id}`
+  );
+}
+
+actualizarProducto(id: number, producto: ProductoRequest): Observable<ProductoResponse> {
+  return this.http.put<ProductoResponse>(
+    `${this.apiUrl}/productos/${id}`, producto
+  );
+}
+
+actualizarVariante(id: number,variante: VarianteProductoRequest): Observable<VarianteProductoResponse> {
+  return this.http.put<VarianteProductoResponse>(
+    `${this.apiUrl}/variantes/${id}`, variante
+  );
+}
+
 }

@@ -15,4 +15,5 @@ public class VarianteListadoDTO {
   private List<String> atributos; // ej: ["Talle: L", "Color: Negro"]
   private Integer stock;
   private BigDecimal precio; // precioBase del producto + precioExtra de la variante
+  private Long productoId; // Agregado para que al updatear una variante, se pueda saber a que producto pertenece
 }

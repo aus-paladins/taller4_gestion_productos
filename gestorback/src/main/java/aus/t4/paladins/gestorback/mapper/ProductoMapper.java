@@ -23,6 +23,15 @@ public class ProductoMapper {
             dto.setCategoriaNombre(entity.getCategoria().getNombre());
         }
 
+        if (entity.getAtributos() != null) {
+            dto.setAtributoIds(
+            entity.getAtributos()
+                .stream()
+                .map(atributo -> atributo.getId())
+                .toList()
+            );
+        }
+
         return dto;
     }
 }

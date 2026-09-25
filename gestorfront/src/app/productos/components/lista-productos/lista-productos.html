@@ -65,7 +65,7 @@
             <td class="precio">{{ producto.precio | currency }}</td>
 
             <td class="acciones">
-              <button class="btn-icono editar" title="Editar">
+              <button class="btn-icono editar" title="Editar" (click)="editarProducto(producto)">
                 <i class="pi pi-pencil"></i>
               </button>
               <button class="btn-icono borrar" title="Eliminar">

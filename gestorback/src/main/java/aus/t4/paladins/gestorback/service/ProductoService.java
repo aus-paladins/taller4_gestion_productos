@@ -41,7 +41,7 @@ public class ProductoService implements IProductoService {
 
   @Override
   public Optional<ProductoResponseDTO> findById(Long id) {
-    return productoRepository.findById(id)
+    return productoRepository.findByIdWithAtributos(id)
         .map(ProductoMapper::toDTO);
   }
 
