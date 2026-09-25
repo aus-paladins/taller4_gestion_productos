@@ -3,6 +3,7 @@ package aus.t4.paladins.gestorback.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class ProductoResponseDTO {
@@ -14,4 +15,5 @@ public class ProductoResponseDTO {
     private Boolean activo;
     private Long categoriaId;
     private String categoriaNombre;
+    private List<Long> atributoIds;
 }

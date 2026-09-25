@@ -1,0 +1,17 @@
+@if (!esAltaProducto) { <!-- Este condicional es para que no se muestre la tabla cuando se está dando de alta un producto -->
+<div class="dashboard-container">
+
+  <!-- Barra lateral (Filtros) -->
+  <aside class="dashboard-sidebar">
+    <app-filtros-productos></app-filtros-productos>
+  </aside>
+
+  <!-- Contenido principal (Tabla) -->
+  <main class="dashboard-content">
+    <app-lista-productos></app-lista-productos>
+  </main>
+
+</div>
+}
+
+<router-outlet />

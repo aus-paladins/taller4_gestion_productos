@@ -13,80 +13,82 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CategoriaService {
+public class CategoriaService implements ICategoriaService {
 
-    private final CategoriaRepository categoriaRepository;
-    private final DepartamentoRepository departamentoRepository;
+  private final CategoriaRepository categoriaRepository;
+  private final DepartamentoRepository departamentoRepository;
 
-    public CategoriaService(
-            CategoriaRepository categoriaRepository,
-            DepartamentoRepository departamentoRepository) {
+  public CategoriaService(
+      CategoriaRepository categoriaRepository,
+      DepartamentoRepository departamentoRepository) {
 
-        this.categoriaRepository = categoriaRepository;
-        this.departamentoRepository = departamentoRepository;
+    this.categoriaRepository = categoriaRepository;
+    this.departamentoRepository = departamentoRepository;
+  }
+
+  @Override
+  public List<CategoriaResponseDTO> findAll() {
+    return categoriaRepository.findAll()
+        .stream()
+        .map(CategoriaMapper::toDTO)
+        .toList();
+  }
+
+  @Override
+  public Optional<CategoriaResponseDTO> findById(Long id) {
+    return categoriaRepository.findById(id)
+        .map(CategoriaMapper::toDTO);
+  }
+
+  @Override
+  public Optional<CategoriaResponseDTO> save(CategoriaRequestDTO request) {
+
+    Optional<Departamento> departamento = departamentoRepository.findById(request.getDepartamentoId());
+
+    if (departamento.isEmpty()) {
+      return Optional.empty();
     }
 
-    public List<CategoriaResponseDTO> findAll() {
-        return categoriaRepository.findAll()
-                .stream()
-                .map(CategoriaMapper::toDTO)
-                .toList();
+    Categoria categoria = new Categoria();
+    categoria.setNombre(request.getNombre());
+    categoria.setDepartamento(departamento.get());
+
+    Categoria saved = categoriaRepository.save(categoria);
+
+    return Optional.of(CategoriaMapper.toDTO(saved));
+  }
+
+  @Override
+  public Optional<CategoriaResponseDTO> update(
+      Long id,
+      CategoriaRequestDTO request) {
+
+    Optional<Categoria> categoriaOptional = categoriaRepository.findById(id);
+
+    Optional<Departamento> departamento = departamentoRepository.findById(request.getDepartamentoId());
+
+    if (categoriaOptional.isEmpty() || departamento.isEmpty()) {
+      return Optional.empty();
     }
 
-    public Optional<CategoriaResponseDTO> findById(Long id) {
-        return categoriaRepository.findById(id)
-                .map(CategoriaMapper::toDTO);
+    Categoria categoria = categoriaOptional.get();
+
+    categoria.setNombre(request.getNombre());
+    categoria.setDepartamento(departamento.get());
+
+    Categoria updated = categoriaRepository.save(categoria);
+
+    return Optional.of(CategoriaMapper.toDTO(updated));
+  }
+
+  @Override
+  public boolean deleteById(Long id) {
+
+    if (!categoriaRepository.existsById(id)) {
+      return false;
     }
 
-    public Optional<CategoriaResponseDTO> save(CategoriaRequestDTO request) {
-
-        Optional<Departamento> departamento =
-                departamentoRepository.findById(request.getDepartamentoId());
-
-        if (departamento.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Categoria categoria = new Categoria();
-        categoria.setNombre(request.getNombre());
-        categoria.setDepartamento(departamento.get());
-
-        Categoria saved = categoriaRepository.save(categoria);
-
-        return Optional.of(CategoriaMapper.toDTO(saved));
-    }
-
-    public Optional<CategoriaResponseDTO> update(
-            Long id,
-            CategoriaRequestDTO request) {
-
-        Optional<Categoria> categoriaOptional =
-                categoriaRepository.findById(id);
-
-        Optional<Departamento> departamento =
-                departamentoRepository.findById(request.getDepartamentoId());
-
-        if (categoriaOptional.isEmpty() || departamento.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Categoria categoria = categoriaOptional.get();
-
-        categoria.setNombre(request.getNombre());
-        categoria.setDepartamento(departamento.get());
-
-        Categoria updated = categoriaRepository.save(categoria);
-
-        return Optional.of(CategoriaMapper.toDTO(updated));
-    }
-
-    public boolean deleteById(Long id) {
-
-        if (!categoriaRepository.existsById(id)) {
-            return false;
-        }
-
-        categoriaRepository.deleteById(id);
-        return true;
-    }
+    categoriaRepository.deleteById(id);
+    return true;
+  }
 }
