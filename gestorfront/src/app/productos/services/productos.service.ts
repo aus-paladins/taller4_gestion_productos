@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import {
   Departamento,
   Categoria,
+  FiltroVariantes,
   ProductoRequest,
   ProductoResponse,
   VarianteProductoRequest,
@@ -51,46 +52,90 @@ export class ProductosService {
     );
   }
 
-  obtenerVariantesListado(): Observable<VarianteListado[]> {
-    return this.http.get<VarianteListado[]>(
-      `${this.apiUrl}/variantes/listado`
-    );
-  }
-
   obtenerAtributos(): Observable<Atributo[]> {
     return this.http.get<Atributo[]>(
       `${this.apiUrl}/atributos`
     );
-}
+  }
 
   obtenerValoresAtributo(): Observable<ValorAtributo[]> {
     return this.http.get<ValorAtributo[]>(
       `${this.apiUrl}/valores-atributo`
     );
-}
+  }
 
-obtenerProducto(id: number): Observable<ProductoResponse> {
-  return this.http.get<ProductoResponse>(
-    `${this.apiUrl}/productos/${id}`
-  );
-}
+  obtenerVariantesListado(
+    filtro?: Partial<FiltroVariantes>
+  ): Observable<VarianteListado[]> {
+    let params = new HttpParams();
 
-obtenerVariante(id: number): Observable<VarianteProductoResponse> {
-  return this.http.get<VarianteProductoResponse>(
-    `${this.apiUrl}/variantes/${id}`
-  );
-}
+    if (filtro?.busqueda) {
+      params = params.set('busqueda', filtro.busqueda);
+    }
 
-actualizarProducto(id: number, producto: ProductoRequest): Observable<ProductoResponse> {
-  return this.http.put<ProductoResponse>(
-    `${this.apiUrl}/productos/${id}`, producto
-  );
-}
+    if (filtro?.departamentoId != null) {
+      params = params.set('departamentoId', filtro.departamentoId);
+    }
 
-actualizarVariante(id: number,variante: VarianteProductoRequest): Observable<VarianteProductoResponse> {
-  return this.http.put<VarianteProductoResponse>(
-    `${this.apiUrl}/variantes/${id}`, variante
-  );
-}
+    if (filtro?.precioMin != null) {
+      params = params.set('precioMin', filtro.precioMin);
+    }
 
+    if (filtro?.precioMax != null) {
+      params = params.set('precioMax', filtro.precioMax);
+    }
+
+    if (filtro?.soloConStock) {
+      params = params.set('soloConStock', filtro.soloConStock);
+    }
+
+    if (filtro?.soloSinStock) {
+      params = params.set('soloSinStock', filtro.soloSinStock);
+    }
+
+    if (filtro?.mostrarInactivos) {
+      params = params.set('mostrarInactivos', filtro.mostrarInactivos);
+    }
+
+    if (filtro?.ordenarPor) {
+      params = params.set('ordenarPor', filtro.ordenarPor);
+    }
+
+    return this.http.get<VarianteListado[]>(
+      `${this.apiUrl}/variantes/listado`,
+      { params }
+    );
+  }
+
+  obtenerProducto(id: number): Observable<ProductoResponse> {
+    return this.http.get<ProductoResponse>(
+      `${this.apiUrl}/productos/${id}`
+    );
+  }
+
+  obtenerVariante(id: number): Observable<VarianteProductoResponse> {
+    return this.http.get<VarianteProductoResponse>(
+      `${this.apiUrl}/variantes/${id}`
+    );
+  }
+
+  actualizarProducto(
+    id: number,
+    producto: ProductoRequest
+  ): Observable<ProductoResponse> {
+    return this.http.put<ProductoResponse>(
+      `${this.apiUrl}/productos/${id}`,
+      producto
+    );
+  }
+
+  actualizarVariante(
+    id: number,
+    variante: VarianteProductoRequest
+  ): Observable<VarianteProductoResponse> {
+    return this.http.put<VarianteProductoResponse>(
+      `${this.apiUrl}/variantes/${id}`,
+      variante
+    );
+  }
 }

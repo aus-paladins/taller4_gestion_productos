@@ -17,7 +17,7 @@ export interface ProductoRequest {
   activo: boolean;
   categoriaId: number;
   atributoIds: number[];
-} 
+}
 
 export interface ProductoResponse {
   id: number;
@@ -53,11 +53,14 @@ export interface VarianteListado {
   productoId: number;
   sku: string;
   nombre: string;
+  departamentoId: number;
+  departamentoNombre: string;
+  categoriaId: number;
+  categoriaNombre: string;
   atributos: string[];
   stock: number;
   precio: number;
 }
-
 export interface Atributo {
   id: number;
   nombre: string;
@@ -69,3 +72,40 @@ export interface ValorAtributo {
   atributoId: number;
   atributoNombre: string;
 }
+
+
+export interface VarianteListado {
+  id: number;
+  sku: string;
+  nombre: string;
+  departamentoId: number;
+  departamentoNombre: string;
+  categoriaId: number;
+  categoriaNombre: string;
+  atributos: string[];
+  stock: number;
+  precio: number;
+}
+
+//Todos los campos son opcionales
+export interface FiltroVariantes {
+  busqueda: string;
+  departamentoId: number | null;
+  precioMin: number | null;
+  precioMax: number | null;
+  soloConStock: boolean;
+  soloSinStock: boolean;
+  mostrarInactivos: boolean;
+  ordenarPor: 'alfabetico' | 'precio_asc' | 'precio_desc';
+}
+export const FILTRO_VACIO: FiltroVariantes = {
+  busqueda: '',
+  departamentoId: null,
+  precioMin: null,
+  precioMax: null,
+  soloConStock: false,
+  soloSinStock: false,
+  mostrarInactivos: false,
+  ordenarPor: 'alfabetico',
+}
+

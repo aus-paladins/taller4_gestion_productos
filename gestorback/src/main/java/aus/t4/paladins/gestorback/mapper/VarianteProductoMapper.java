@@ -48,6 +48,12 @@ public class VarianteProductoMapper {
     dto.setId(entity.getId());
     dto.setSku(entity.getSku());
     dto.setNombre(entity.getProducto().getNombre());
+    dto.setCategoriaId(entity.getProducto().getCategoria().getId());
+    dto.setCategoriaNombre(entity.getProducto().getCategoria().getNombre());
+    dto.setDepartamentoId(
+        entity.getProducto().getCategoria().getDepartamento().getId());
+    dto.setDepartamentoNombre(
+        entity.getProducto().getCategoria().getDepartamento().getNombre());
     dto.setStock(entity.getStock());
 
     BigDecimal precioExtra = entity.getPrecioExtra() != null

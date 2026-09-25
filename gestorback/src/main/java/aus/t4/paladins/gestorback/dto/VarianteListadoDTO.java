@@ -12,6 +12,10 @@ public class VarianteListadoDTO {
   private Long id;
   private String sku;
   private String nombre; // nombre del producto padre
+  private Long departamentoId;
+  private String departamentoNombre;
+  private Long categoriaId;
+  private String categoriaNombre;
   private List<String> atributos; // ej: ["Talle: L", "Color: Negro"]
   private Integer stock;
   private BigDecimal precio; // precioBase del producto + precioExtra de la variante
