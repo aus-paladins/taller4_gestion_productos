@@ -1,5 +1,6 @@
 package aus.t4.paladins.gestorback.controller;
 
+import aus.t4.paladins.gestorback.dto.VarianteFiltroDTO;
 import aus.t4.paladins.gestorback.dto.VarianteListadoDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoRequestDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoResponseDTO;
@@ -7,6 +8,7 @@ import aus.t4.paladins.gestorback.service.IVarianteProductoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -28,8 +30,19 @@ public class VarianteProductoController {
 
   // Endpoint "de lectura directa" para lista-productos en Angular
   @GetMapping("/listado")
-  public List<VarianteListadoDTO> findAllParaListado() {
-    return service.findAllParaListado();
+  public List<VarianteListadoDTO> buscar(
+      @RequestParam(required = false) String busqueda,
+      @RequestParam(required = false) Long departamentoId,
+      @RequestParam(required = false) BigDecimal precioMin,
+      @RequestParam(required = false) BigDecimal precioMax,
+      @RequestParam(required = false) Boolean soloConStock,
+      @RequestParam(required = false) Boolean soloSinStock,
+      @RequestParam(required = false) Boolean mostrarInactivos,
+      @RequestParam(required = false) String ordenarPor) {
+    VarianteFiltroDTO filtro = new VarianteFiltroDTO(
+        busqueda, departamentoId, precioMin, precioMax,
+        soloConStock, soloSinStock, mostrarInactivos, ordenarPor);
+    return service.buscar(filtro);
   }
 
   @GetMapping("/{id}")

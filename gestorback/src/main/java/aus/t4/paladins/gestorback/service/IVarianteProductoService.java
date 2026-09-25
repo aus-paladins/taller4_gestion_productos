@@ -1,5 +1,6 @@
 package aus.t4.paladins.gestorback.service;
 
+import aus.t4.paladins.gestorback.dto.VarianteFiltroDTO;
 import aus.t4.paladins.gestorback.dto.VarianteListadoDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoRequestDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoResponseDTO;
@@ -14,7 +15,7 @@ public interface IVarianteProductoService {
 
   List<VarianteProductoResponseDTO> findAll();
 
-  List<VarianteListadoDTO> findAllParaListado();
+  List<VarianteListadoDTO> buscar(VarianteFiltroDTO filtro);
 
   // VarianteProductoResponseDTO findBySku(String sku);
   // List<VarianteProductoResponseDTO> findByProducto(Long productoId);

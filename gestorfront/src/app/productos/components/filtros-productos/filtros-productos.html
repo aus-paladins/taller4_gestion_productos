@@ -4,8 +4,13 @@
   <!-- Búsqueda Libre -->
   <div class="filtro-grupo">
     <label for="buscar">Buscar producto o SKU</label>
-    <!-- Directiva pInputText aplicada a un input nativo -->
-    <input pInputText id="buscar" [(ngModel)]="busqueda" placeholder="Ej: Campera térmica..." class="w-full" />
+    <input
+      pInputText
+      id="buscar"
+      [(ngModel)]="busqueda"
+      (ngModelChange)="onBusquedaChange($event)"
+      placeholder="Ej: Campera..."
+      class="w-full" />
   </div>
 
   <!-- Departamento -->
@@ -14,9 +19,11 @@
     <p-select
       [options]="departamentos"
       [(ngModel)]="departamentoSeleccionado"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="Seleccionar..."
+      (ngModelChange)="onDepartamentoChange($event)"
+      optionLabel="nombre"
+      optionValue="id"
+      placeholder="Todos los departamentos"
+      [showClear]="true"
       styleClass="w-full">
     </p-select>
   </div>
@@ -28,6 +35,7 @@
       <!-- p-inputNumber permite formatear monedas automáticamente -->
       <p-inputNumber
         [(ngModel)]="precioMin"
+        (ngModelChange)="onPrecioMinChange($event)"
         placeholder="Mín ($)"
         mode="currency"
         currency="ARS"
@@ -36,6 +44,7 @@
       <span>-</span>
       <p-inputNumber
         [(ngModel)]="precioMax"
+        (ngModelChange)="onPrecioMaxChange($event)"
         placeholder="Máx ($)"
         mode="currency"
         currency="ARS"
@@ -47,8 +56,22 @@
   <!-- Filtro de Stock (Checkbox) -->
   <div class="filtro-grupo checkboxes">
     <div class="checkbox-item">
-      <p-checkbox [(ngModel)]="soloConStock" [binary]="true" inputId="stock"></p-checkbox>
+      <p-checkbox
+        [(ngModel)]="soloConStock"
+        (ngModelChange)="onStockChange($event)"
+        [binary]="true"
+        inputId="stock">
+      </p-checkbox>
       <label for="stock">Solo productos con stock</label>
+    </div>
+    <div class="checkbox-item">
+      <p-checkbox
+        [(ngModel)]="soloSinStock"
+        (ngModelChange)="onSinStockChange($event)"
+        [binary]="true"
+        inputId="sinStock">
+      </p-checkbox>
+      <label for="sinStock">Solo productos sin stock</label>
     </div>
   </div>
 
@@ -58,22 +81,23 @@
     <p-select
       [options]="opcionesOrden"
       [(ngModel)]="ordenSeleccionado"
+      (ngModelChange)="onOrdenChange($event)"
       optionLabel="label"
       optionValue="value"
       styleClass="w-full">
     </p-select>
   </div>
 
-  <!-- Agrupar por -->
-  <div class="filtro-grupo">
-    <label for="agrupar">Agrupar por</label>
-    <p-select
-      [options]="opcionesAgrupacion"
-      [(ngModel)]="agrupacionSeleccionada"
-      optionLabel="label"
-      optionValue="value"
-      styleClass="w-full">
-    </p-select>
+  <div class="filtro-grupo checkboxes filtro-admin">
+    <div class="checkbox-item">
+      <p-checkbox
+        [(ngModel)]="mostrarInactivos"
+        (ngModelChange)="onMostrarInactivosChange($event)"
+        [binary]="true"
+        inputId="inactivos">
+      </p-checkbox>
+      <label for="inactivos">Mostrar productos inactivos</label>
+    </div>
   </div>
 
   <button class="btn-secundario">Limpiar Filtros</button>

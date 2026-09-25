@@ -1,5 +1,6 @@
 package aus.t4.paladins.gestorback.service;
 
+import aus.t4.paladins.gestorback.dto.VarianteFiltroDTO;
 import aus.t4.paladins.gestorback.dto.VarianteListadoDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoRequestDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoResponseDTO;
@@ -12,6 +13,7 @@ import aus.t4.paladins.gestorback.repository.ValorAtributoRepository;
 import aus.t4.paladins.gestorback.repository.VarianteProductoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,11 +43,30 @@ public class VarianteProductoService implements IVarianteProductoService {
   }
 
   @Override
-  public List<VarianteListadoDTO> findAllParaListado() {
-    return repository.findAllForListado()
-        .stream()
+  public List<VarianteListadoDTO> buscar(VarianteFiltroDTO filtro) {
+    List<VarianteProducto> variantes = repository.buscar(
+        filtro.busqueda(),
+        filtro.departamentoId(),
+        filtro.precioMin(),
+        filtro.precioMax(),
+        filtro.soloConStock(),
+        filtro.soloSinStock(),
+        filtro.mostrarInactivos());
+    return variantes.stream()
         .map(VarianteProductoMapper::toListadoDTO)
+        .sorted(resolverComparador(filtro.ordenarPor()))
         .toList();
+  }
+
+  // El orden se resuelve acá,
+  // con un Comparator sobre la lista ya mapeada a DTO.
+  private Comparator<VarianteListadoDTO> resolverComparador(String ordenarPor) {
+    return switch (ordenarPor == null ? "" : ordenarPor) {
+      case "precio_asc" -> Comparator.comparing(VarianteListadoDTO::getPrecio);
+      case "precio_desc" -> Comparator.comparing(VarianteListadoDTO::getPrecio).reversed();
+      default -> Comparator.comparing(
+          VarianteListadoDTO::getNombre, String.CASE_INSENSITIVE_ORDER);
+    };
   }
 
   @Override

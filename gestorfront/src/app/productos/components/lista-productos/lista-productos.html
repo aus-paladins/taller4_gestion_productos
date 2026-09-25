@@ -18,71 +18,72 @@
     </p-button>
   </header>
 
-  <!-- Simulando la agrupación por categoría -->
-  <div class="categoria-seccion">
-    <h3 class="categoria-titulo">
-      <span class="marcador"></span> Ropa de Invierno
-    </h3>
+  @if (cargando) {
+    <div class="estado-vacio">Cargando productos...</div>
+  } @else if (error) {
+    <div class="estado-vacio">No se pudieron cargar los productos. ¿Está corriendo el backend?</div>
+  } @else if (grupos.length === 0) {
+    <div class="estado-vacio">No hay productos que coincidan con los filtros aplicados.</div>
+  } @else {
 
-    <div class="tabla-responsive">
-      <table class="tabla-productos">
-        <thead>
-          <tr>
-            <th>SKU</th>
-            <th>Producto</th>
-            <th>Atributos</th>
-            <th>Stock</th>
-            <th>Precio Unit.</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-        @if (cargando) {
-          <tr>
-            <td colspan="6" style="text-align: center; padding: 2rem;">Cargando productos...</td>
-          </tr>
-        } @else if (error) {
-          <tr>
-            <td colspan="6" style="text-align: center; padding: 2rem;">No se pudieron cargar los productos. ¿Está corriendo el backend?</td>
-          </tr>
-        } @else {
-        <!-- Bucle principal para iterar sobre la lista de productos -->
-        @for (producto of productos; track producto.id) {
-          <tr>
-            <td class="sku">{{ producto.sku }}</td>
-            <td class="nombre">{{ producto.nombre }}</td>
+    <!-- Un bloque por departamento -->
+    @for (departamento of grupos; track departamento.departamentoId) {
+      <section class="departamento-seccion">
+        <h2 class="departamento-titulo">{{ departamento.departamentoNombre }}</h2>
 
-            <td class="atributos">
-              <!-- Sub-bucle para imprimir cada etiqueta individualmente -->
-              @for (atributo of producto.atributos; track $index) {
-                <span class="etiqueta">{{ atributo }}</span>
-              }
-            </td>
+        <!-- Dentro de cada departamento, un bloque por categoría -->
+        @for (categoria of departamento.categorias; track categoria.categoriaId) {
+          <div class="categoria-seccion">
+            <h3 class="categoria-titulo">
+              <span class="marcador"></span> {{ categoria.categoriaNombre }}
+            </h3>
 
-            <td class="stock">{{ producto.stock }}</td>
+            <div class="tabla-responsive">
+              <table class="tabla-productos">
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>Producto</th>
+                    <th>Atributos</th>
+                    <th>Stock</th>
+                    <th>Precio Unit.</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Bucle principal para iterar sobre la lista de variantes productos -->
+                  @for (producto of categoria.items; track producto.id) {
+                    <tr>
+                      <td class="sku">{{ producto.sku }}</td>
+                      <td class="nombre">{{ producto.nombre }}</td>
 
-            <!-- Usamos un pipe de Angular para formatear el número como moneda -->
-            <td class="precio">{{ producto.precio | currency }}</td>
+                      <td class="atributos">
+                        <!-- Sub-bucle para imprimir cada etiqueta individualmente -->
+                        @for (atributo of producto.atributos; track $index) {
+                          <span class="etiqueta">{{ atributo }}</span>
+                        }
+                      </td>
 
-            <td class="acciones">
-              <button class="btn-icono editar" title="Editar">
-                <i class="pi pi-pencil"></i>
-              </button>
-              <button class="btn-icono borrar" title="Eliminar">
-                <i class="pi pi-trash"></i>
-              </button>
-            </td>
-          </tr>
-        } @empty {
-          <!-- Mensaje automático si el arreglo llega vacío -->
-          <tr>
-            <td colspan="6" style="text-align: center; padding: 2rem;">No hay productos registrados en esta categoría.</td>
-          </tr>
+                      <td class="stock">{{ producto.stock }}</td>
+                      <td class="precio">{{ producto.precio | currency }}</td>
+
+                      <td class="acciones">
+                        <button class="btn-icono editar" title="Editar">
+                          <i class="pi pi-pencil"></i>
+                        </button>
+                        <button class="btn-icono borrar" title="Eliminar">
+                          <i class="pi pi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
         }
-        }
-        </tbody>
-      </table>
-    </div>
-  </div>
+      </section>
+    }
+  }
 </div>
 
