@@ -3,8 +3,10 @@ package aus.t4.paladins.gestorback.service;
 import aus.t4.paladins.gestorback.dto.ProductoRequestDTO;
 import aus.t4.paladins.gestorback.dto.ProductoResponseDTO;
 import aus.t4.paladins.gestorback.mapper.ProductoMapper;
+import aus.t4.paladins.gestorback.model.Atributo;
 import aus.t4.paladins.gestorback.model.Categoria;
 import aus.t4.paladins.gestorback.model.Producto;
+import aus.t4.paladins.gestorback.repository.AtributoRepository;
 import aus.t4.paladins.gestorback.repository.CategoriaRepository;
 import aus.t4.paladins.gestorback.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
@@ -17,13 +19,16 @@ public class ProductoService implements IProductoService {
 
   private final ProductoRepository productoRepository;
   private final CategoriaRepository categoriaRepository;
+  private final AtributoRepository atributoRepository;
 
   public ProductoService(
       ProductoRepository productoRepository,
-      CategoriaRepository categoriaRepository) {
+      CategoriaRepository categoriaRepository,
+      AtributoRepository atributoRepository) {
 
     this.productoRepository = productoRepository;
     this.categoriaRepository = categoriaRepository;
+    this.atributoRepository = atributoRepository;
   }
 
   @Override
@@ -43,7 +48,8 @@ public class ProductoService implements IProductoService {
   @Override
   public Optional<ProductoResponseDTO> save(ProductoRequestDTO request) {
 
-    Optional<Categoria> categoria = categoriaRepository.findById(request.getCategoriaId());
+    Optional<Categoria> categoria =
+        categoriaRepository.findById(request.getCategoriaId());
 
     if (categoria.isEmpty()) {
       return Optional.empty();
@@ -57,6 +63,13 @@ public class ProductoService implements IProductoService {
     producto.setActivo(request.getActivo());
     producto.setCategoria(categoria.get());
 
+    if (request.getAtributoIds() != null) {
+      List<Atributo> atributos =
+          atributoRepository.findAllById(request.getAtributoIds());
+
+      producto.setAtributos(atributos);
+    }
+
     Producto saved = productoRepository.save(producto);
 
     return Optional.of(ProductoMapper.toDTO(saved));
@@ -67,9 +80,11 @@ public class ProductoService implements IProductoService {
       Long id,
       ProductoRequestDTO request) {
 
-    Optional<Producto> productoOptional = productoRepository.findById(id);
+    Optional<Producto> productoOptional =
+        productoRepository.findById(id);
 
-    Optional<Categoria> categoria = categoriaRepository.findById(request.getCategoriaId());
+    Optional<Categoria> categoria =
+        categoriaRepository.findById(request.getCategoriaId());
 
     if (productoOptional.isEmpty() || categoria.isEmpty()) {
       return Optional.empty();
@@ -82,6 +97,13 @@ public class ProductoService implements IProductoService {
     producto.setPrecioBase(request.getPrecioBase());
     producto.setActivo(request.getActivo());
     producto.setCategoria(categoria.get());
+
+    if (request.getAtributoIds() != null) {
+      List<Atributo> atributos =
+          atributoRepository.findAllById(request.getAtributoIds());
+
+      producto.setAtributos(atributos);
+    }
 
     Producto updated = productoRepository.save(producto);
 

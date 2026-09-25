@@ -2,8 +2,20 @@
 
   <div class="form-header">
     <h2>Alta de producto</h2>
-    <p>Ingrese los datos del nuevo producto.</p>
+    <p>Ingrese los datos del producto y su variante.</p>
   </div>
+
+
+  @if (errorDepartamentos) {
+    <p-message
+      severity="error"
+      variant="simple"
+      size="small"
+    >
+      No se pudieron cargar los departamentos.
+    </p-message>
+  }
+
 
   @if (errorCategorias) {
     <p-message
@@ -15,134 +27,348 @@
     </p-message>
   }
 
-  @if (errorCreacion) {
+
+  @if (productoCreado) {
     <p-message
-      severity="error"
+      severity="success"
       variant="simple"
       size="small"
     >
-      No se pudo crear el producto.
+      Producto creado exitosamente.
     </p-message>
   }
+
 
   <form
     [formGroup]="productoForm"
     (ngSubmit)="crearProducto()"
   >
 
-    <div class="campo">
-      <label for="nombre">Nombre</label>
+    <!-- ================================= -->
+    <!-- PRODUCTO                          -->
+    <!-- ================================= -->
 
-      <input
-        pInputText
-        id="nombre"
-        type="text"
-        formControlName="nombre"
-        placeholder="Nombre del producto"
-        fluid
-        [invalid]="esInvalido('nombre')"
-      />
+    <section class="seccion-formulario">
 
-      @if (esInvalido('nombre')) {
-        <p-message
-          severity="error"
-          variant="simple"
-          size="small"
-        >
-          El nombre es obligatorio.
-        </p-message>
-      }
-    </div>
+      <h3>Producto</h3>
 
 
-    <div class="campo">
-      <label for="description">Descripción</label>
+      <div class="campo">
 
-      <input
-        pInputText
-        id="description"
-        type="text"
-        formControlName="description"
-        placeholder="Descripción del producto"
-        fluid
-        [invalid]="esInvalido('description')"
-      />
+        <label for="departamento">
+          Departamento
+        </label>
 
-      @if (esInvalido('description')) {
-        <p-message
-          severity="error"
-          variant="simple"
-          size="small"
-        >
-          La descripción es obligatoria.
-        </p-message>
-      }
-    </div>
-
-
-    <div class="campo">
-      <label for="precioBase">Precio base</label>
-
-      <p-inputnumber
-        inputId="precioBase"
-        formControlName="precioBase"
-        mode="decimal"
-        [min]="0"
-        [minFractionDigits]="2"
-        [maxFractionDigits]="2"
-        fluid
-        [invalid]="esInvalido('precioBase')"
-      />
-
-      @if (esInvalido('precioBase')) {
-        <p-message
-          severity="error"
-          variant="simple"
-          size="small"
-        >
-          El precio debe ser mayor o igual a 0.
-        </p-message>
-      }
-    </div>
-
-
-    <div class="campo">
-      <label for="categoria">Categoría</label>
-
-      <p-select
-        inputId="categoria"
-        formControlName="categoriaId"
-        [options]="categorias"
-        optionLabel="nombre"
-        optionValue="id"
-        placeholder="Seleccione una categoría"
-        fluid
-        [invalid]="esInvalido('categoriaId')"
-      />
-
-      @if (esInvalido('categoriaId')) {
-        <p-message
-          severity="error"
-          variant="simple"
-          size="small"
-        >
-          Debe seleccionar una categoría.
-        </p-message>
-      }
-    </div>
-
-
-    <div class="campo-checkbox">
-      <label>
-        <input
-          type="checkbox"
-          formControlName="activo"
+        <p-select
+          inputId="departamento"
+          formControlName="departamentoId"
+          [options]="departamentos"
+          optionLabel="nombre"
+          optionValue="id"
+          placeholder="Seleccione un departamento"
+          fluid
+          [invalid]="esInvalido('departamentoId')"
         />
 
-        Producto activo
-      </label>
-    </div>
+        @if (esInvalido('departamentoId')) {
+          <p-message
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            Debe seleccionar un departamento.
+          </p-message>
+        }
 
+      </div>
+
+
+      <div class="campo">
+
+        <label for="categoria">
+          Categoría
+        </label>
+
+        <p-select
+          inputId="categoria"
+          formControlName="categoriaId"
+          [options]="categoriasFiltradas"
+          optionLabel="nombre"
+          optionValue="id"
+          placeholder="Seleccione una categoría"
+          fluid
+          [invalid]="esInvalido('categoriaId')"
+        />
+
+        @if (esInvalido('categoriaId')) {
+          <p-message
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            Debe seleccionar una categoría.
+          </p-message>
+        }
+
+      </div>
+
+
+      <div class="campo">
+
+        <label for="nombre">
+          Nombre
+        </label>
+
+        <input
+          pInputText
+          id="nombre"
+          type="text"
+          formControlName="nombre"
+          placeholder="Nombre del producto"
+          fluid
+          [invalid]="esInvalido('nombre')"
+        />
+
+        @if (esInvalido('nombre')) {
+          <p-message
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            El nombre es obligatorio.
+          </p-message>
+        }
+
+      </div>
+
+
+      <div class="campo">
+
+        <label for="description">
+          Descripción
+        </label>
+
+        <input
+          pInputText
+          id="description"
+          type="text"
+          formControlName="description"
+          placeholder="Descripción del producto"
+          fluid
+          [invalid]="esInvalido('description')"
+        />
+
+        @if (esInvalido('description')) {
+          <p-message
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            La descripción es obligatoria.
+          </p-message>
+        }
+
+      </div>
+
+
+      <div class="campo">
+
+        <label for="precioBase">
+          Precio base
+        </label>
+
+        <p-inputnumber
+          inputId="precioBase"
+          formControlName="precioBase"
+          mode="decimal"
+          [min]="0"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          fluid
+          [invalid]="esInvalido('precioBase')"
+        />
+
+        @if (esInvalido('precioBase')) {
+          <p-message
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            El precio debe ser mayor o igual a 0.
+          </p-message>
+        }
+
+      </div>
+
+
+      <div class="campo-checkbox">
+
+        <label>
+
+          <input
+            type="checkbox"
+            formControlName="activo"
+          />
+
+          Producto activo
+
+        </label>
+
+      </div>
+
+
+      <!-- Atributos que tendrá el producto -->
+      <div class="campo">
+
+        <label for="atributos">
+          Atributos del producto
+        </label>
+
+        <p-multiselect
+          id="atributos"
+          [options]="atributos"
+          optionLabel="nombre"
+          optionValue="id"
+          formControlName="atributoIds"
+          placeholder="Seleccionar atributos"
+          fluid
+        />
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================= -->
+    <!-- VARIANTE                          -->
+    <!-- ================================= -->
+
+    <section class="seccion-formulario">
+
+      <h3>Variante</h3>
+
+
+      <!-- Valores correspondientes a los atributos seleccionados -->
+      @for (
+        atributoId of productoForm.get('atributoIds')?.value ?? [];
+        track atributoId
+      ) {
+
+        <div class="campo">
+
+          <label>
+            {{ nombreAtributo(atributoId) }}
+          </label>
+
+          <p-select
+            [options]="valoresDeAtributo(atributoId)"
+            optionLabel="valor"
+            optionValue="id"
+            [(ngModel)]="valoresSeleccionados[atributoId]"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="Seleccionar valor"
+            fluid
+          />
+
+        </div>
+
+      }
+
+
+      <div class="campo">
+
+        <label for="sku">
+          SKU
+        </label>
+
+        <input
+          pInputText
+          id="sku"
+          type="text"
+          formControlName="sku"
+          placeholder="SKU de la variante"
+          fluid
+          [invalid]="esInvalido('sku')"
+        />
+
+        @if (esInvalido('sku')) {
+          <p-message
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            El SKU es obligatorio.
+          </p-message>
+        }
+
+      </div>
+
+
+      <div class="campo">
+
+        <label for="stock">
+          Stock
+        </label>
+
+        <p-inputnumber
+          inputId="stock"
+          formControlName="stock"
+          mode="decimal"
+          [min]="0"
+          [minFractionDigits]="0"
+          [maxFractionDigits]="0"
+          fluid
+          [invalid]="esInvalido('stock')"
+        />
+
+        @if (esInvalido('stock')) {
+          <p-message
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            El stock debe ser mayor o igual a 0.
+          </p-message>
+        }
+
+      </div>
+
+
+      <div class="campo">
+
+        <label for="precioExtra">
+          Precio extra
+        </label>
+
+        <p-inputnumber
+          inputId="precioExtra"
+          formControlName="precioExtra"
+          mode="decimal"
+          [min]="0"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          fluid
+          [invalid]="esInvalido('precioExtra')"
+        />
+
+        @if (esInvalido('precioExtra')) {
+          <p-message
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            El precio extra debe ser mayor o igual a 0.
+          </p-message>
+        }
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================= -->
+    <!-- ACCIONES                          -->
+    <!-- ================================= -->
 
     <div class="acciones">
 
@@ -154,7 +380,7 @@
 
       <p-button
         type="button"
-        label="Cancelar"
+        label="Salir"
         icon="pi pi-times"
         severity="secondary"
         [outlined]="true"
@@ -162,18 +388,21 @@
       />
 
     </div>
-    
+
+
     @if (productoCreado) {
+    <div class="mensaje-exito">
+
       <p-message
         severity="success"
         variant="simple"
         size="small"
-        styleClass="mensaje-exito"
       >
-        Producto creado exitosamente
+        Producto creado exitosamente.
       </p-message>
-    }
 
+      </div>
+  }
   </form>
 
 </div>

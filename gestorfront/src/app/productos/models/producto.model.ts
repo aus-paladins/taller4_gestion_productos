@@ -1,6 +1,13 @@
+export interface Departamento {
+  id: number;
+  nombre: string;
+}
+
 export interface Categoria {
   id: number;
   nombre: string;
+  departamentoId: number;
+  departamentoNombre: string;
 }
 
 export interface ProductoRequest {
@@ -9,7 +16,8 @@ export interface ProductoRequest {
   precioBase: number;
   activo: boolean;
   categoriaId: number;
-}
+  atributoIds: number[];
+} 
 
 export interface ProductoResponse {
   id: number;
@@ -21,7 +29,24 @@ export interface ProductoResponse {
   categoriaNombre: string;
 }
 
-// Coincide 1 a 1 con VarianteListadoDTO del back (GET /api/variantes/listado)
+export interface VarianteProductoResponse {
+  id: number;
+  sku: string;
+  precioExtra: number;
+  stock: number;
+  productoId: number;
+  productoNombre: string;
+  valoresAtributoIds: number[];
+}
+
+export interface VarianteProductoRequest {
+  sku: string;
+  precioExtra: number;
+  stock: number;
+  productoId: number;
+  valoresAtributoIds: number[];
+}
+
 export interface VarianteListado {
   id: number;
   sku: string;
@@ -29,4 +54,16 @@ export interface VarianteListado {
   atributos: string[];
   stock: number;
   precio: number;
+}
+
+export interface Atributo {
+  id: number;
+  nombre: string;
+}
+
+export interface ValorAtributo {
+  id: number;
+  valor: string;
+  atributoId: number;
+  atributoNombre: string;
 }
