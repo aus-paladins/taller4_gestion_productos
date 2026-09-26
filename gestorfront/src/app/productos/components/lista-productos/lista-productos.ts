@@ -36,15 +36,18 @@ export class ListaProductos implements OnInit {
   private productosService = inject(ProductosService);
   private filtrosService = inject(FiltrosVariantesService);
 
+  // Angular exige que toObservable() (como inject()) se ejecute en un contexto
+  // de inyección: constructor, field initializer, o runInInjectionContext(...).
+  private filtro$ = toObservable(this.filtrosService.filtro);
+  private destroy$ = new Subject<void>();
+
   grupos: GrupoDepartamento[] = [];
   cargando = false;
   error = false;
 
-  private destroy$ = new Subject<void>();
-
   ngOnInit(): void {
     // Reacciona a cada cambio del filtro compartido
-    toObservable(this.filtrosService.filtro).pipe(
+    this.filtro$.pipe(
       switchMap((filtro) => {
         this.cargando = true;
         this.error = false;
