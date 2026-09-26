@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -45,6 +45,11 @@ export class AltaProducto implements OnInit {
   private formBuilder = inject(FormBuilder);
   private productosService = inject(ProductosService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  modoEdicion = false;
+  productoId: number | null = null;
+  varianteId: number | null = null;
 
   departamentos: Departamento[] = [];
   categorias: Categoria[] = [];
@@ -67,25 +72,13 @@ export class AltaProducto implements OnInit {
     // PRODUCTO
     // -------------------------
 
-    departamentoId: [
-      null as number | null,
-      Validators.required
-    ],
+    departamentoId: [null as number | null, Validators.required],
 
-    categoriaId: [
-      null as number | null,
-      Validators.required
-    ],
+    categoriaId: [null as number | null, Validators.required],
 
-    nombre: [
-      '',
-      Validators.required
-    ],
+    nombre: ['', Validators.required],
 
-    description: [
-      '',
-      Validators.required
-    ],
+    description: ['', Validators.required],
 
     precioBase: [
       0,
@@ -98,18 +91,13 @@ export class AltaProducto implements OnInit {
     activo: [true],
 
     // Atributos que tendrá el producto
-    atributoIds: [
-      [] as number[]
-    ],
+    atributoIds: [[] as number[]],
 
     // -------------------------
     // VARIANTE
     // -------------------------
 
-    sku: [
-      '',
-      Validators.required
-    ],
+    sku: ['', Validators.required],
 
     stock: [
       0,
@@ -126,7 +114,6 @@ export class AltaProducto implements OnInit {
         Validators.min(0)
       ]
     ]
-
   });
 
   ngOnInit(): void {
@@ -135,284 +122,306 @@ export class AltaProducto implements OnInit {
     this.cargarAtributos();
     this.cargarValoresAtributo();
 
-    this.productoForm
-      .get('departamentoId')
-      ?.valueChanges
-      .subscribe(departamentoId => {
+    const productoId = this.route.snapshot.paramMap.get('productoId');
+    const varianteId = this.route.snapshot.paramMap.get('varianteId');
 
-        this.filtrarCategorias(departamentoId);
+    if (productoId && varianteId) {
+      this.modoEdicion = true;
+      this.productoId = Number(productoId);
+      this.varianteId = Number(varianteId);
+    }
 
-        // Cuando cambia el departamento, la categoría anterior deja de ser válida.
-        this.productoForm
-          .get('categoriaId')
-          ?.setValue(null);
-      });
+    if (this.modoEdicion) {
+      this.cargarDatosEdicion();
+    }
 
-    this.productoForm
-      .get('atributoIds')
-      ?.valueChanges
-      .subscribe(atributoIds => {
+    this.productoForm.get('departamentoId')?.valueChanges.subscribe(departamentoId => {
+      this.filtrarCategorias(departamentoId);
 
-        this.valoresSeleccionados = {};
+      // Cuando cambia el departamento, la categoría anterior deja de ser válida.
+      this.productoForm.get('categoriaId')?.setValue(null);
+    });
 
-        for (const atributoId of atributoIds ?? []) {
-          this.valoresSeleccionados[atributoId] = null;
-        }
-      });
+    this.productoForm.get('atributoIds')?.valueChanges.subscribe(atributoIds => {
+      this.valoresSeleccionados = {};
+
+      for (const atributoId of atributoIds ?? []) {
+        this.valoresSeleccionados[atributoId] = null;
+      }
+    });
   }
 
   cargarDepartamentos(): void {
-
     this.productosService.obtenerDepartamentos().subscribe({
-
       next: (departamentos) => {
         this.departamentos = departamentos;
         this.errorDepartamentos = false;
       },
 
       error: (error) => {
-        console.error(
-          'Error al cargar departamentos:',
-          error
-        );
-
+        console.error('Error al cargar departamentos:', error);
         this.errorDepartamentos = true;
       }
-
     });
   }
 
   cargarCategorias(): void {
-
     this.productosService.obtenerCategorias().subscribe({
-
       next: (categorias) => {
         this.categorias = categorias;
         this.errorCategorias = false;
       },
 
       error: (error) => {
-        console.error(
-          'Error al cargar categorías:',
-          error
-        );
-
+        console.error('Error al cargar categorías:', error);
         this.errorCategorias = true;
       }
-
     });
   }
 
   cargarAtributos(): void {
-
     this.productosService.obtenerAtributos().subscribe({
-
       next: (atributos) => {
         this.atributos = atributos;
       },
 
       error: (error) => {
-        console.error(
-          'Error al cargar atributos:',
-          error
-        );
+        console.error('Error al cargar atributos:', error);
       }
-
     });
   }
 
   cargarValoresAtributo(): void {
-
     this.productosService.obtenerValoresAtributo().subscribe({
-
       next: (valores) => {
         this.valoresAtributo = valores;
       },
 
       error: (error) => {
-        console.error(
-          'Error al cargar valores de atributos:',
-          error
-        );
+        console.error('Error al cargar valores de atributos:', error);
       }
-
     });
   }
 
   valoresDeAtributo(atributoId: number): ValorAtributo[] {
-    return this.valoresAtributo.filter(
-      valor => valor.atributoId === atributoId
-    );
+    return this.valoresAtributo.filter(valor => valor.atributoId === atributoId);
   }
 
   nombreAtributo(atributoId: number): string {
-    return this.atributos.find(
-      atributo => atributo.id === atributoId
-    )?.nombre ?? '';
+    return this.atributos.find(atributo => atributo.id === atributoId)?.nombre ?? '';
   }
 
-  filtrarCategorias(
-    departamentoId: number | null
-  ): void {
-
+  filtrarCategorias(departamentoId: number | null): void {
     if (departamentoId === null) {
       this.categoriasFiltradas = [];
       return;
     }
 
-    this.categoriasFiltradas =
-      this.categorias.filter(
-        categoria =>
-          categoria.departamentoId === departamentoId
-      );
+    this.categoriasFiltradas = this.categorias.filter(
+      categoria => categoria.departamentoId === departamentoId
+    );
+  }
+
+  private cargarDatosEdicion(): void {
+    if (this.productoId === null || this.varianteId === null) {
+      return;
+    }
+
+    this.productosService.obtenerProducto(this.productoId).subscribe({
+      next: (producto) => {
+        const categoria = this.categorias.find(
+          categoria => categoria.id === producto.categoriaId
+        );
+
+        this.filtrarCategorias(categoria?.departamentoId ?? null);
+
+        this.productoForm.patchValue({
+          departamentoId: categoria?.departamentoId ?? null,
+          categoriaId: producto.categoriaId,
+          nombre: producto.nombre,
+          description: producto.description,
+          precioBase: producto.precioBase,
+          activo: producto.activo,
+          atributoIds: producto.atributoIds
+        });
+      },
+
+      error: (error) => {
+        console.error('Error al cargar producto para edición:', error);
+        this.errorCreacion = true;
+      }
+    });
+
+    this.productosService.obtenerVariante(this.varianteId).subscribe({
+      next: (variante) => {
+        this.productoForm.patchValue({
+          sku: variante.sku,
+          stock: variante.stock,
+          precioExtra: variante.precioExtra
+        });
+
+        this.cargarValoresSeleccionados(variante.valoresAtributoIds);
+      },
+
+      error: (error) => {
+        console.error('Error al cargar variante para edición:', error);
+        this.errorCreacion = true;
+      }
+    });
+  }
+
+  private cargarValoresSeleccionados(valoresAtributoIds: number[]): void {
+    this.valoresSeleccionados = {};
+
+    for (const valorId of valoresAtributoIds) {
+      const valor = this.valoresAtributo.find(valor => valor.id === valorId);
+
+      if (valor) {
+        this.valoresSeleccionados[valor.atributoId] = valorId;
+      }
+    }
   }
 
   crearProducto(): void {
-
     this.productoCreado = false;
     this.errorCreacion = false;
 
     if (this.productoForm.invalid) {
-
       this.productoForm.markAllAsTouched();
-
       return;
     }
 
-    const valores =
-      this.productoForm.getRawValue();
+    const valores = this.productoForm.getRawValue();
 
     const producto: ProductoRequest = {
-
       nombre: valores.nombre!,
-
       description: valores.description!,
-
       precioBase: valores.precioBase!,
-
       activo: valores.activo!,
-
       categoriaId: valores.categoriaId!,
-
       atributoIds: valores.atributoIds ?? []
-
     };
 
-    this.productosService
-      .crearProducto(producto)
-      .subscribe({
+    // -------------------------
+    // EDICIÓN
+    // -------------------------
 
-        next: (productoCreado) => {
+    if (this.modoEdicion) {
+      this.actualizarProductoYVariante(producto);
+      return;
+    }
 
-          console.log(
-            'Producto creado:',
-            productoCreado
-          );
+    // -------------------------
+    // CREACIÓN
+    // -------------------------
 
-          this.crearVariante(
-            productoCreado.id
-          );
-        },
+    this.productosService.crearProducto(producto).subscribe({
+      next: (productoCreado) => {
+        console.log('Producto creado:', productoCreado);
+        this.crearVariante(productoCreado.id);
+      },
 
-        error: (error) => {
-
-          console.error(
-            'Error al crear producto:',
-            error
-          );
-
-          this.errorCreacion = true;
-        }
-
-      });
+      error: (error) => {
+        console.error('Error al crear producto:', error);
+        this.errorCreacion = true;
+      }
+    });
   }
 
-  private crearVariante(
-    productoId: number
-  ): void {
-
-    const valores =
-      this.productoForm.getRawValue();
+  private crearVariante(productoId: number): void {
+    const valores = this.productoForm.getRawValue();
 
     // Convertimos los valores seleccionados en una lista de IDs
     // para enviarlos en el formato esperado por el backend.
-    const valoresAtributoIds = Object.values(
-      this.valoresSeleccionados
-    ).filter(
-      (id): id is number => id !== null
-    );
+    const valoresAtributoIds = Object.values(this.valoresSeleccionados)
+      .filter((id): id is number => id !== null);
 
     const variante: VarianteProductoRequest = {
-
       sku: valores.sku!,
-
       precioExtra: valores.precioExtra!,
-
       stock: valores.stock!,
-
       productoId: productoId,
-
       valoresAtributoIds: valoresAtributoIds
-
     };
 
-    this.productosService
-      .crearVariante(variante)
-      .subscribe({
+    this.productosService.crearVariante(variante).subscribe({
+      next: (varianteCreada) => {
+        console.log('Variante creada:', varianteCreada);
+        this.productoCreado = true;
+        this.limpiarFormulario();
+      },
 
-        next: (varianteCreada) => {
+      error: (error) => {
+        console.error('Error al crear variante:', error);
+        this.errorCreacion = true;
+      }
+    });
+  }
 
-          console.log(
-            'Variante creada:',
-            varianteCreada
-          );
+  private actualizarVariante(): void {
+    if (this.varianteId === null || this.productoId === null) {
+      return;
+    }
 
-          this.productoCreado = true;
+    const valores = this.productoForm.getRawValue();
 
-          this.limpiarFormulario();
-        },
+    const valoresAtributoIds = Object.values(this.valoresSeleccionados)
+      .filter((id): id is number => id !== null);
 
-        error: (error) => {
+    const variante: VarianteProductoRequest = {
+      sku: valores.sku!,
+      precioExtra: valores.precioExtra!,
+      stock: valores.stock!,
+      productoId: this.productoId,
+      valoresAtributoIds: valoresAtributoIds
+    };
 
-          console.error(
-            'Error al crear variante:',
-            error
-          );
+    this.productosService.actualizarVariante(this.varianteId, variante).subscribe({
+      next: (varianteActualizada) => {
+        console.log('Variante actualizada:', varianteActualizada);
+        this.productoCreado = true;
+      },
 
-          this.errorCreacion = true;
-        }
+      error: (error) => {
+        console.error('Error al actualizar variante:', error);
+        this.errorCreacion = true;
+      }
+    });
+  }
 
-      });
+  private actualizarProductoYVariante(producto: ProductoRequest): void {
+    if (this.productoId === null || this.varianteId === null) {
+      return;
+    }
+
+    this.productosService.actualizarProducto(this.productoId, producto).subscribe({
+      next: (productoActualizado) => {
+        console.log('Producto actualizado:', productoActualizado);
+        this.actualizarVariante();
+      },
+
+      error: (error) => {
+        console.error('Error al actualizar producto:', error);
+        this.errorCreacion = true;
+      }
+    });
   }
 
   private limpiarFormulario(): void {
-
     this.productoForm.reset({
-
       departamentoId: null,
-
       categoriaId: null,
-
       nombre: '',
-
       description: '',
-
       precioBase: 0,
-
       activo: true,
-
       atributoIds: [],
-
       sku: '',
-
       stock: 0,
-
       precioExtra: 0
-
     });
 
     this.valoresSeleccionados = {};
-
     this.categoriasFiltradas = [];
   }
 
@@ -421,9 +430,7 @@ export class AltaProducto implements OnInit {
   }
 
   esInvalido(campo: string): boolean {
-
-    const control =
-      this.productoForm.get(campo);
+    const control = this.productoForm.get(campo);
 
     return !!(
       control &&

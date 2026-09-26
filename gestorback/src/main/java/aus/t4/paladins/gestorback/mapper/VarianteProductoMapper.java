@@ -74,6 +74,8 @@ public class VarianteProductoMapper {
       dto.setAtributos(Collections.emptyList());
     }
 
+    dto.setProductoId(entity.getProducto().getId());
+
     return dto;
   }
 }

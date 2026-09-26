@@ -1,8 +1,10 @@
 <div class="alta-producto">
 
   <div class="form-header">
-    <h2>Alta de producto</h2>
-    <p>Ingrese los datos del producto y su variante.</p>
+    <h2>{{ modoEdicion ? 'Editar producto' : 'Alta de producto'}}</h2>
+    <p>  {{ modoEdicion
+      ? 'Modifique los datos del producto y su variante.'
+      : 'Ingrese los datos del producto y su variante.' }}</p>
   </div>
 
 
@@ -26,18 +28,6 @@
       No se pudieron cargar las categorías.
     </p-message>
   }
-
-
-  @if (productoCreado) {
-    <p-message
-      severity="success"
-      variant="simple"
-      size="small"
-    >
-      Producto creado exitosamente.
-    </p-message>
-  }
-
 
   <form
     [formGroup]="productoForm"
@@ -374,13 +364,13 @@
 
       <p-button
         type="submit"
-        label="Alta"
+        [label]="modoEdicion ? 'Guardar cambios' : 'Alta'"
         icon="pi pi-check"
       />
 
       <p-button
         type="button"
-        label="Salir"
+        [label]="modoEdicion ? 'Cancelar edición' : 'Salir'"
         icon="pi pi-times"
         severity="secondary"
         [outlined]="true"
@@ -398,7 +388,9 @@
         variant="simple"
         size="small"
       >
-        Producto creado exitosamente.
+        {{ modoEdicion
+        ? 'Producto actualizado correctamente.'
+        : 'Producto creado exitosamente.' }}
       </p-message>
 
       </div>

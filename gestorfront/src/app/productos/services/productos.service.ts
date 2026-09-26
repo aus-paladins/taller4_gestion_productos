@@ -64,32 +64,42 @@ export class ProductosService {
     );
   }
 
-  obtenerVariantesListado(filtro?: Partial<FiltroVariantes>): Observable<VarianteListado[]> {
-      let params = new HttpParams();
-      if (filtro?.busqueda) {
-        params = params.set('busqueda', filtro.busqueda);
-      }
-      if (filtro?.departamentoId != null) {
-        params = params.set('departamentoId', filtro.departamentoId);
-      }
-      if (filtro?.precioMin != null) {
-        params = params.set('precioMin', filtro.precioMin);
-      }
-      if (filtro?.precioMax != null) {
-        params = params.set('precioMax', filtro.precioMax);
-      }
-      if (filtro?.soloConStock) {
-        params = params.set('soloConStock', filtro.soloConStock);
-      }
-      if (filtro?.soloSinStock) {
-        params = params.set('soloSinStock', filtro.soloSinStock);
-      }
-      if (filtro?.mostrarInactivos) {
-        params = params.set('mostrarInactivos', filtro.mostrarInactivos);
-      }
-      if (filtro?.ordenarPor) {
-        params = params.set('ordenarPor', filtro.ordenarPor);
-      }
+  obtenerVariantesListado(
+    filtro?: Partial<FiltroVariantes>
+  ): Observable<VarianteListado[]> {
+    let params = new HttpParams();
+
+    if (filtro?.busqueda) {
+      params = params.set('busqueda', filtro.busqueda);
+    }
+
+    if (filtro?.departamentoId != null) {
+      params = params.set('departamentoId', filtro.departamentoId);
+    }
+
+    if (filtro?.precioMin != null) {
+      params = params.set('precioMin', filtro.precioMin);
+    }
+
+    if (filtro?.precioMax != null) {
+      params = params.set('precioMax', filtro.precioMax);
+    }
+
+    if (filtro?.soloConStock) {
+      params = params.set('soloConStock', filtro.soloConStock);
+    }
+
+    if (filtro?.soloSinStock) {
+      params = params.set('soloSinStock', filtro.soloSinStock);
+    }
+
+    if (filtro?.mostrarInactivos) {
+      params = params.set('mostrarInactivos', filtro.mostrarInactivos);
+    }
+
+    if (filtro?.ordenarPor) {
+      params = params.set('ordenarPor', filtro.ordenarPor);
+    }
 
     return this.http.get<VarianteListado[]>(
       `${this.apiUrl}/variantes/listado`,
@@ -97,4 +107,35 @@ export class ProductosService {
     );
   }
 
+  obtenerProducto(id: number): Observable<ProductoResponse> {
+    return this.http.get<ProductoResponse>(
+      `${this.apiUrl}/productos/${id}`
+    );
+  }
+
+  obtenerVariante(id: number): Observable<VarianteProductoResponse> {
+    return this.http.get<VarianteProductoResponse>(
+      `${this.apiUrl}/variantes/${id}`
+    );
+  }
+
+  actualizarProducto(
+    id: number,
+    producto: ProductoRequest
+  ): Observable<ProductoResponse> {
+    return this.http.put<ProductoResponse>(
+      `${this.apiUrl}/productos/${id}`,
+      producto
+    );
+  }
+
+  actualizarVariante(
+    id: number,
+    variante: VarianteProductoRequest
+  ): Observable<VarianteProductoResponse> {
+    return this.http.put<VarianteProductoResponse>(
+      `${this.apiUrl}/variantes/${id}`,
+      variante
+    );
+  }
 }

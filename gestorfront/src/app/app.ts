@@ -16,6 +16,6 @@ export class App {
   protected readonly title = signal('gestorfront');
 
     get esAltaProducto(): boolean {
-      return this.router.url === '/productos/nuevo';
+      return this.router.url === '/productos/nuevo' || this.router.url.startsWith('/productos/editar/');
     }  
 }

@@ -76,35 +76,46 @@ export class ListaProductos implements OnInit {
     this.router.navigate(['/productos/nuevo']);
   }
 
+  editarProducto(producto: VarianteListado): void {
+    this.router.navigate(['/productos/editar', producto.productoId, producto.id]);
+  }
+
   private agruparPorDepartamentoYCategoria(
     productos: VarianteListado[]
   ): GrupoDepartamento[] {
     const departamentos = new Map<number, GrupoDepartamento>();
+
     for (const producto of productos) {
       let departamento = departamentos.get(producto.departamentoId);
+
       if (!departamento) {
         departamento = {
           departamentoId: producto.departamentoId,
           departamentoNombre: producto.departamentoNombre,
           categorias: [],
         };
+
         departamentos.set(producto.departamentoId, departamento);
       }
+
       let categoria = departamento.categorias.find(
         (c) => c.categoriaId === producto.categoriaId
       );
+
       if (!categoria) {
         categoria = {
           categoriaId: producto.categoriaId,
           categoriaNombre: producto.categoriaNombre,
           items: [],
         };
+
         departamento.categorias.push(categoria);
       }
+
       categoria.items.push(producto);
     }
+
     return Array.from(departamentos.values());
   }
-
 }
 

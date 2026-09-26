@@ -27,6 +27,7 @@ export interface ProductoResponse {
   activo: boolean;
   categoriaId: number;
   categoriaNombre: string;
+  atributoIds: number[];
 }
 
 export interface VarianteProductoResponse {
@@ -47,6 +48,19 @@ export interface VarianteProductoRequest {
   valoresAtributoIds: number[];
 }
 
+export interface VarianteListado {
+  id: number;
+  productoId: number;
+  sku: string;
+  nombre: string;
+  departamentoId: number;
+  departamentoNombre: string;
+  categoriaId: number;
+  categoriaNombre: string;
+  atributos: string[];
+  stock: number;
+  precio: number;
+}
 export interface Atributo {
   id: number;
   nombre: string;
