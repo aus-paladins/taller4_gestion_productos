@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Subject, of } from 'rxjs';
 import { catchError, switchMap, takeUntil } from 'rxjs/operators';
@@ -26,7 +28,9 @@ interface GrupoCategoria {
   imports: [
     ButtonModule,
     CurrencyPipe,
+    ConfirmDialogModule,
   ],
+  providers: [ConfirmationService],
   templateUrl: './lista-productos.html',
   styleUrl: './lista-productos.scss',
 })
@@ -35,6 +39,7 @@ export class ListaProductos implements OnInit {
   private router = inject(Router);
   private productosService = inject(ProductosService);
   private filtrosService = inject(FiltrosVariantesService);
+  private confirmationService = inject(ConfirmationService);
 
   // Angular exige que toObservable() (como inject()) se ejecute en un contexto
   // de inyección: constructor, field initializer, o runInInjectionContext(...).
@@ -78,6 +83,26 @@ export class ListaProductos implements OnInit {
 
   editarProducto(producto: VarianteListado): void {
     this.router.navigate(['/productos/editar', producto.productoId, producto.id]);
+  }
+
+  eliminarProducto(producto: VarianteListado): void {
+    this.confirmationService.confirm({
+      message: '¿Estás seguro de que quieres eliminar este producto?',
+      header: 'Confirmar Eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí',
+      rejectLabel: 'No',
+      accept: () => {
+        this.productosService.eliminarProducto(producto.productoId).subscribe({
+          next: () => {
+            this.filtrosService.refrescar();
+          },
+          error: (error) => {
+            console.error('Error al eliminar producto:', error);
+          }
+        });
+      }
+    });
   }
 
   private agruparPorDepartamentoYCategoria(

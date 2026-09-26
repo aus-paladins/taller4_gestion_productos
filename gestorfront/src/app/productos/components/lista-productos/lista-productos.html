@@ -1,5 +1,5 @@
 <div class="inventario-container">
-
+  <p-confirmdialog></p-confirmdialog>
   <header class="inventario-header">
     <div>
       <h2>Inventario General</h2>
@@ -89,7 +89,8 @@
 
                         <button
                           class="btn-icono borrar"
-                          title="Eliminar">
+                          title="Eliminar"
+                          (click)="eliminarProducto(producto)">
                           <i class="pi pi-trash"></i>
                         </button>
                       </td>

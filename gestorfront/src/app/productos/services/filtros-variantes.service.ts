@@ -16,5 +16,9 @@ export class FiltrosVariantesService {
   limpiar(): void {
     this.filtro.set({ ...FILTRO_VACIO });
   }
+
+  refrescar(): void { //Método para el delete, refresca el front luego de eliminar un producto sin tocar los filtros
+    this.filtro.update(actual => ({ ...actual }));
+  }
 }
 

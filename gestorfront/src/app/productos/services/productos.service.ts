@@ -119,23 +119,21 @@ export class ProductosService {
     );
   }
 
-  actualizarProducto(
-    id: number,
-    producto: ProductoRequest
-  ): Observable<ProductoResponse> {
+  actualizarProducto(id: number, producto: ProductoRequest): Observable<ProductoResponse> {
     return this.http.put<ProductoResponse>(
-      `${this.apiUrl}/productos/${id}`,
-      producto
+      `${this.apiUrl}/productos/${id}`, producto
     );
   }
 
-  actualizarVariante(
-    id: number,
-    variante: VarianteProductoRequest
-  ): Observable<VarianteProductoResponse> {
+  actualizarVariante(id: number, variante: VarianteProductoRequest): Observable<VarianteProductoResponse> {
     return this.http.put<VarianteProductoResponse>(
-      `${this.apiUrl}/variantes/${id}`,
-      variante
+      `${this.apiUrl}/variantes/${id}`, variante
+    );
+  }
+
+  eliminarProducto(id: number): Observable<void> {
+  return this.http.delete<void>(
+    `${this.apiUrl}/productos/${id}`
     );
   }
 }
