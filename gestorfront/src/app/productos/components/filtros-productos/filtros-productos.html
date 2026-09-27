@@ -88,17 +88,19 @@
     </p-select>
   </div>
 
-  <div class="filtro-grupo checkboxes filtro-admin">
-    <div class="checkbox-item">
-      <p-checkbox
-        [(ngModel)]="mostrarInactivos"
-        (ngModelChange)="onMostrarInactivosChange($event)"
-        [binary]="true"
-        inputId="inactivos">
-      </p-checkbox>
-      <label for="inactivos">Mostrar productos inactivos</label>
+  @if (auth.esAdmin()) {
+    <div class="filtro-grupo checkboxes filtro-admin">
+      <div class="checkbox-item">
+        <p-checkbox
+          [(ngModel)]="mostrarInactivos"
+          (ngModelChange)="onMostrarInactivosChange($event)"
+          [binary]="true"
+          inputId="inactivos">
+        </p-checkbox>
+        <label for="inactivos">Mostrar productos inactivos</label>
+      </div>
     </div>
-  </div>
+  }
 
   <button class="btn-secundario" (click)="limpiarFiltros()">Limpiar Filtros</button>
 </div>

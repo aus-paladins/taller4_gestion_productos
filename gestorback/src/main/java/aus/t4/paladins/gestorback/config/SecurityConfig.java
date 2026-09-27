@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,7 +40,14 @@ public class SecurityConfig {
         .cors(cors -> {
         }) // Esta línea es para que el front pueda hacer peticiones al back
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+        .authorizeHttpRequests(auth -> auth
+          .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+          .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
+          .requestMatchers("/h2-console/**").permitAll()
+          .requestMatchers(HttpMethod.GET, "/api/variantes/listado").permitAll()
+          .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+          .requestMatchers("/api/**").hasRole("ADMIN")
+          .anyRequest().denyAll())
         .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())); // para que no rechace H2 que arma su
                                                                                 // interfaz con frames
 

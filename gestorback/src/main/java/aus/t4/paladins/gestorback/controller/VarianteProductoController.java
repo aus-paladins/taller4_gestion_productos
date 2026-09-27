@@ -6,6 +6,8 @@ import aus.t4.paladins.gestorback.dto.VarianteProductoRequestDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoResponseDTO;
 import aus.t4.paladins.gestorback.service.IVarianteProductoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -39,9 +41,12 @@ public class VarianteProductoController {
       @RequestParam(required = false) Boolean soloSinStock,
       @RequestParam(required = false) Boolean mostrarInactivos,
       @RequestParam(required = false) String ordenarPor) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    boolean esAdmin = authentication != null && authentication.getAuthorities().stream()
+        .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     VarianteFiltroDTO filtro = new VarianteFiltroDTO(
         busqueda, departamentoId, precioMin, precioMax,
-        soloConStock, soloSinStock, mostrarInactivos, ordenarPor);
+      soloConStock, soloSinStock, esAdmin && Boolean.TRUE.equals(mostrarInactivos), ordenarPor);
     return service.buscar(filtro);
   }
 

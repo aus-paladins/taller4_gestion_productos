@@ -4,6 +4,8 @@ import aus.t4.paladins.gestorback.model.Atributo;
 import aus.t4.paladins.gestorback.model.Categoria;
 import aus.t4.paladins.gestorback.model.Departamento;
 import aus.t4.paladins.gestorback.model.Producto;
+import aus.t4.paladins.gestorback.model.RolUsuario;
+import aus.t4.paladins.gestorback.model.Usuario;
 import aus.t4.paladins.gestorback.model.ValorAtributo;
 import aus.t4.paladins.gestorback.model.VarianteProducto;
 import aus.t4.paladins.gestorback.repository.AtributoRepository;
@@ -12,6 +14,9 @@ import aus.t4.paladins.gestorback.repository.DepartamentoRepository;
 import aus.t4.paladins.gestorback.repository.ProductoRepository;
 import aus.t4.paladins.gestorback.repository.ValorAtributoRepository;
 import aus.t4.paladins.gestorback.repository.VarianteProductoRepository;
+import aus.t4.paladins.gestorback.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,9 +34,21 @@ public class DataInitializer {
       ProductoRepository productoRepository,
       AtributoRepository atributoRepository,
       ValorAtributoRepository valorAtributoRepository,
-      VarianteProductoRepository varianteProductoRepository) {
+            VarianteProductoRepository varianteProductoRepository,
+            UsuarioRepository usuarioRepository,
+            PasswordEncoder passwordEncoder,
+            @Value("${app.admin.username:admin}") String adminUsername,
+            @Value("${app.admin.password:Admin123!}") String adminPassword) {
 
     return args -> {
+
+            if (usuarioRepository.findByUsername(adminUsername).isEmpty()) {
+                usuarioRepository.save(Usuario.builder()
+                        .username(adminUsername)
+                        .password(passwordEncoder.encode(adminPassword))
+                        .rol(RolUsuario.ADMIN)
+                        .build());
+            }
 
       // Si ya existen datos, no volvemos a cargarlos.
       if (departamentoRepository.count() > 0) {

@@ -10,6 +10,7 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Departamento, FiltroVariantes } from '../../models/producto.model';
 import { ProductosService } from '../../services/productos.service';
 import { FiltrosVariantesService } from '../../services/filtros-variantes.service';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-filtros-productos',
@@ -27,6 +28,7 @@ export class FiltrosProductos implements OnInit, OnDestroy {
 
   private productosService = inject(ProductosService);
   private filtrosService = inject(FiltrosVariantesService);
+  readonly auth = inject(AuthService);
 
   departamentos: Departamento[] = [];
 

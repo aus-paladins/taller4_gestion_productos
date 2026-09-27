@@ -11,7 +11,7 @@
 
 ### Comentarios del profesor
 
-- backend y frontend 
+- backend y frontend
 - 2 roles minimo, admin y guess. (depende, puede ser que no aplique y sea sólo admini)
 - Seguridad Jwt
 - Orm
@@ -29,6 +29,4 @@
 - Valores posibles por atributos (ejemplo talle puede ser S, XL, L etc, paginas seria numerico...)
 - Hay atributos realmente generales? por ejemplo nombre del producto, descripcion, color, tamaño?
 
-
 #### pie de paginasssssssss
-

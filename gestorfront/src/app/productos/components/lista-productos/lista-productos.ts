@@ -11,6 +11,7 @@ import { catchError, switchMap, takeUntil } from 'rxjs/operators';
 import { VarianteListado } from '../../models/producto.model';
 import { ProductosService } from '../../services/productos.service';
 import { FiltrosVariantesService } from '../../services/filtros-variantes.service';
+import { AuthService } from '../../../auth/auth.service';
 
 interface GrupoDepartamento {
   departamentoId: number;
@@ -40,6 +41,7 @@ export class ListaProductos implements OnInit {
   private productosService = inject(ProductosService);
   private filtrosService = inject(FiltrosVariantesService);
   private confirmationService = inject(ConfirmationService);
+  readonly auth = inject(AuthService);
 
   // Angular exige que toObservable() (como inject()) se ejecute en un contexto
   // de inyección: constructor, field initializer, o runInInjectionContext(...).
