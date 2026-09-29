@@ -1,28 +1,31 @@
-# Gestion de Productos
+# Gestión de Productos
 
 ## Proyecto full-stack para Taller de Programación 4
 
-### Integrantes del grupetete
+### Integrantes del grupo
 
 - Andre Busnelli
 - Manuela Cepeda
 - Gregorio Dib
 - Enrique Thedy
 
-Asignatura: Uiversidad Nacional de Rosario - Instituto Politécnico Superior - Analista Universitario en Sistemas - Taller de Programación 4
+Asignatura: Universidad Nacional de Rosario - Instituto Politécnico Superior - Analista Universitario en Sistemas - Taller de Programación 4
 
 ### Información General del Proyecto
 **Arquitectura:** Aplicación web Full-Stack (Desacoplada)
 **Propósito:** Sistema de Gestión de Productos
 **Estructura:**
 - **Backend:** 
-    - Framework: Spring Boot 4.x / Java 17+
+    - Framework: Spring Boot 4.x / Java 21
     - Gestor de Proyectos: **Apache Maven 3.6+** (Gestión de ciclo de vida y dependencias)
+    - Persistencia: Spring Data JPA / Hibernate
 - **Frontend:** 
     - Framework: Angular v21 (Single Page Application)
     - Gestor de Paquetes: Node Package Manager (npm)
+- **Base de datos:**
+    - PostgreSQL 17 ejecutándose mediante Docker Compose
 
-### Descrición
+### Descripción
 Sistema de gestión de inventario con productos, variantes (talle/color/etc.), autenticación por roles y filtrado en tiempo real, implementado como una API REST en Spring Boot consumida por una SPA en Angular.
 
 ### Instrucciones rápidas
@@ -31,12 +34,16 @@ Sistema de gestión de inventario con productos, variantes (talle/color/etc.), a
   git clone https://github.com/aus-paladins/taller4_gestion_productos.git
   cd taller4_gestion_productos
   ```
-2. Levantar backend desde Maven (Spring Boot):
+2. Levantar la base de datos
+```bash
+docker compose up -d
+```
+3. Levantar backend desde Maven (Spring Boot):
 ```bash
 cd gestorback
 ./mvnw spring-boot:run
 ```
-3. Levantar el frontend (Angular)
+4. Levantar el frontend (Angular)
 ```bash
 cd gestorfront
 npm install
@@ -117,7 +124,7 @@ erDiagram
 
 ## Arquitectura del backend
 
-**Stack:** Spring Boot 4 (Java 21), Spring Data JPA + Hibernate, Spring Security + JWT (jjwt), base H2 en memoria.
+**Stack:** Spring Boot 4 (Java 21), Spring Data JPA + Hibernate, Spring Security + JWT (jjwt), PostgreSQL.
 
 ### Capas
 
@@ -143,7 +150,7 @@ El backend sigue una arquitectura en capas clásica, repetida de forma consisten
 
 `GET /api/variantes/listado` es la excepción al patrón anterior: no es un CRUD genérico, es un endpoint de lectura hecho a medida para la pantalla principal del frontend. Devuelve `VarianteListadoDTO` — una forma "plana" (SKU, nombre del producto, departamento, categoría, atributos ya en texto, stock, precio final) pensada para que Angular la consuma directo, sin tener que resolver relaciones ni volver a pedir datos.
 
-Acepta filtros opcionales por query params (`busqueda`, `departamentoId`, `precioMin`, `precioMax`, `soloConStock`, `soloSinStock`, `mostrarInactivos`, `ordenarPor`), todos combinables. Se resolvió con un único `@Query` en JPQL (no con Specifications ni Criteria API), usando el patrón `(:parametro IS NULL OR <condición>)` para que cada filtro sea opcional dentro de una consulta fija — se prefirió por legibilidad. El orden (`ordenarPor`) se resuelve en Java con un `Comparator` después de traer los datos, ya que expresar una columna a ordenar como parámetro de un `@Query` estático no es directo en JPQL.
+Acepta filtros opcionales por query params (`busqueda`, `departamentoId`, `precioMin`, `precioMax`, `soloConStock`, `soloSinStock`, `mostrarInactivos`, `ordenarPor`), todos combinables. Se resolvió con un único `@Query` en JPQL (no con Specifications ni Criteria API), utilizando condiciones opcionales para que cada filtro pueda aplicarse dentro de una consulta fija — se prefirió esta alternativa por legibilidad. El orden (`ordenarPor`) se resuelve en Java con un `Comparator` después de traer los datos, ya que expresar una columna a ordenar como parámetro de un `@Query` estático no es directo en JPQL.
 
 La consulta trae en un solo viaje a la base (`JOIN FETCH`) el producto, su categoría, su departamento y los valores de atributo de cada variante, forzando una estrategia de carga eager en lugar del comportamiento lazy predeterminado. De este modo, se evita el problema de las N+1 queries que aparecería si Hibernate tuviera que consultar cada relación de forma individual al mapear las filas a DTO.
 

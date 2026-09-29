@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: gestor-productos-db
+    environment:
+      POSTGRES_DB: gestor_productos
+      POSTGRES_USER: paladins
+      POSTGRES_PASSWORD: paladins
+      TZ: America/Argentina/Buenos_Aires
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

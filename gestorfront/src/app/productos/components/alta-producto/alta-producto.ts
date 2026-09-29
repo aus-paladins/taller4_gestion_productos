@@ -394,7 +394,7 @@ export class AltaProducto implements OnInit {
       return;
     }
 
-    this.productosService.actualizarProducto(this.productoId, producto).subscribe({
+    this.productosService.actualizarProducto(this.productoId, producto).subscribe({ 
       next: (productoActualizado) => {
         console.log('Producto actualizado:', productoActualizado);
         this.actualizarVariante();
@@ -426,7 +426,7 @@ export class AltaProducto implements OnInit {
   }
 
   cancelar(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/productos']);
   }
 
   esInvalido(campo: string): boolean {
