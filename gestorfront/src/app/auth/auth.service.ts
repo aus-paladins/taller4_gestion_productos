@@ -22,6 +22,11 @@ export class AuthService {
     return this.session()?.accessToken ?? null;
   }
 
+  sesionExpirada(): boolean {
+    const token = this.token();
+    return token !== null && this.tokenVencido(token);
+  }
+
   login(username: string, password: string): Observable<AuthSession> {
     return this.http.post<AuthSession>(`${this.apiUrl}/login`, { username, password })
       .pipe(tap(session => this.saveSession(session)));
@@ -45,9 +50,28 @@ export class AuthService {
   private readSession(): AuthSession | null {
     try {
       const stored = localStorage.getItem(this.sessionKey);
-      return stored ? JSON.parse(stored) as AuthSession : null;
+      if (!stored) {
+        return null;
+      }
+      const session = JSON.parse(stored) as AuthSession;
+      if (this.tokenVencido(session.accessToken)) {
+        localStorage.removeItem(this.sessionKey);
+        return null;
+      }
+      return session;
     } catch {
       return null;
+    }
+  }
+
+  // Lee el claim `exp` (en segundos) del payload del JWT; un token ilegible se considera vencido
+  private tokenVencido(token: string): boolean {
+    try {
+      const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const { exp } = JSON.parse(atob(payload)) as { exp?: number };
+      return typeof exp === 'number' && exp * 1000 <= Date.now();
+    } catch {
+      return true;
     }
   }
 }
