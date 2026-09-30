@@ -140,6 +140,10 @@ export class ProductosService {
     );
   }
 
+  eliminarVariante(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/variantes/${id}`);
+  }
+
   altaCompleta(request: ProductoAltaCompletaRequest): Observable<VarianteProductoResponse> {
     return this.http.post<VarianteProductoResponse>(
       `${this.apiUrl}/variantes/alta-completa`,

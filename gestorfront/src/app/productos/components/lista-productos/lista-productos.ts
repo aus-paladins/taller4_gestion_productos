@@ -95,7 +95,7 @@ export class ListaProductos implements OnInit {
       acceptLabel: 'Sí',
       rejectLabel: 'No',
       accept: () => {
-        this.productosService.eliminarProducto(producto.productoId).subscribe({
+        this.productosService.eliminarVariante(producto.productoId).subscribe({
           next: () => {
             this.filtrosService.refrescar();
           },
@@ -142,7 +142,15 @@ export class ListaProductos implements OnInit {
       categoria.items.push(producto);
     }
 
-    return Array.from(departamentos.values());
+    const grupos = Array.from(departamentos.values());
+
+    grupos.sort((a, b) => a.departamentoNombre.localeCompare(b.departamentoNombre));
+
+    for (const departamento of grupos) {
+      departamento.categorias.sort((a, b) => a.categoriaNombre.localeCompare(b.categoriaNombre));
+    }
+
+    return grupos;
   }
 }
 
