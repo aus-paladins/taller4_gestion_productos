@@ -9,8 +9,6 @@ import aus.t4.paladins.gestorback.model.Categoria;
 import aus.t4.paladins.gestorback.model.Producto;
 import aus.t4.paladins.gestorback.model.ValorAtributo;
 import aus.t4.paladins.gestorback.model.VarianteProducto;
-import aus.t4.paladins.gestorback.repository.CategoriaRepository;
-import aus.t4.paladins.gestorback.repository.DepartamentoRepository;
 import aus.t4.paladins.gestorback.repository.ProductoRepository;
 import aus.t4.paladins.gestorback.repository.ValorAtributoRepository;
 import aus.t4.paladins.gestorback.repository.VarianteProductoRepository;
@@ -27,21 +25,18 @@ public class VarianteProductoService implements IVarianteProductoService {
   private final VarianteProductoRepository repository;
   private final ProductoRepository productoRepository;
   private final ValorAtributoRepository valorAtributoRepository;
-  private final CategoriaRepository categoriaRepository;
-  private final DepartamentoRepository departamentoRepository;
+  private final LimpiezaCatalogoService limpiezaCatalogoService;
 
   public VarianteProductoService(
       VarianteProductoRepository repository,
       ProductoRepository productoRepository,
       ValorAtributoRepository valorAtributoRepository,
-      CategoriaRepository categoriaRepository,
-      DepartamentoRepository departamentoRepository) {
+      LimpiezaCatalogoService limpiezaCatalogoService) {
 
     this.repository = repository;
     this.productoRepository = productoRepository;
     this.valorAtributoRepository = valorAtributoRepository;
-    this.categoriaRepository = categoriaRepository;
-    this.departamentoRepository = departamentoRepository;
+    this.limpiezaCatalogoService = limpiezaCatalogoService;
   }
 
   @Override
@@ -179,26 +174,7 @@ public class VarianteProductoService implements IVarianteProductoService {
 
     productoRepository.deleteById(productoId);
 
-    eliminarCategoriaSiQuedoVacia(categoriaId);
-  }
-
-  private void eliminarCategoriaSiQuedoVacia(Long categoriaId) {
-    if (productoRepository.countByCategoriaId(categoriaId) > 0) {
-      return;
-    }
-
-    Categoria categoria = categoriaRepository.findById(categoriaId).orElseThrow();
-    Long departamentoId = categoria.getDepartamento().getId();
-
-    categoriaRepository.deleteById(categoriaId);
-
-    eliminarDepartamentoSiQuedoVacio(departamentoId);
-  }
-
-  private void eliminarDepartamentoSiQuedoVacio(Long departamentoId) {
-    if (categoriaRepository.countByDepartamentoId(departamentoId) == 0) {
-      departamentoRepository.deleteById(departamentoId);
-    }
+    LimpiezaCatalogoService.eliminarCategoriaSiQuedoVacia(categoriaId);
   }
 
 }

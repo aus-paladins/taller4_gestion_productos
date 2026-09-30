@@ -60,11 +60,13 @@
           [invalid]="esInvalido('departamentoId')"
           >
           <ng-template #footer>
-            <div class="p-2">
-              <p-button type="button" label="Agregar departamento..." icon="pi pi-plus"
-                severity="secondary" variant="text" fluid
-                (onClick)="abrirDialogoDepartamento()" />
-            </div>
+            @if (!modoEdicion) {
+              <div class="p-2">
+                <p-button type="button" label="Agregar departamento..." icon="pi pi-plus"
+                  severity="secondary" variant="text" fluid
+                  (onClick)="abrirDialogoDepartamento()" />
+              </div>
+            }
           </ng-template>
         </p-select>
 
@@ -98,11 +100,13 @@
           [invalid]="esInvalido('categoriaId')"
           >
           <ng-template #footer>
-            <div class="p-2">
-              <p-button type="button" label="Agregar categoria..." icon="pi pi-plus"
-                severity="secondary" variant="text" fluid
-                (onClick)="abrirDialogoCategoria()" />
-            </div>
+            @if (!modoEdicion) {
+              <div class="p-2">
+                <p-button type="button" label="Agregar categoria..." icon="pi pi-plus"
+                  severity="secondary" variant="text" fluid
+                  (onClick)="abrirDialogoCategoria()" />
+              </div>
+            }
           </ng-template>
         </p-select>
 
@@ -241,11 +245,13 @@
           fluid
           >
           <ng-template #footer>
-            <div class="p-2">
-              <p-button type="button" label="Agregar atributo..." icon="pi pi-plus"
-                severity="secondary" variant="text" fluid
-                (onClick)="abrirDialogoAtributo()" />
-            </div>
+            @if (!modoEdicion) {
+              <div class="p-2">
+                <p-button type="button" label="Agregar atributo..." icon="pi pi-plus"
+                  severity="secondary" variant="text" fluid
+                  (onClick)="abrirDialogoAtributo()" />
+              </div>
+            }
           </ng-template>
         </p-multiselect>
 
@@ -286,11 +292,13 @@
             fluid
             >
             <ng-template #footer>
-              <div class="p-2">
-                <p-button type="button" label="Agregar valor..." icon="pi pi-plus"
-                  severity="secondary" variant="text" fluid
-                  (onClick)="abrirDialogoValor(atributoId)" />
-              </div>
+              @if (!modoEdicion) {
+                <div class="p-2">
+                  <p-button type="button" label="Agregar valor..." icon="pi pi-plus"
+                    severity="secondary" variant="text" fluid
+                    (onClick)="abrirDialogoValor(atributoId)" />
+                </div>
+              }
             </ng-template>
           </p-select>
 
