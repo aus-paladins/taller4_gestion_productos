@@ -10,6 +10,7 @@ import aus.t4.paladins.gestorback.repository.AtributoRepository;
 import aus.t4.paladins.gestorback.repository.CategoriaRepository;
 import aus.t4.paladins.gestorback.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,15 +21,18 @@ public class ProductoService implements IProductoService {
   private final ProductoRepository productoRepository;
   private final CategoriaRepository categoriaRepository;
   private final AtributoRepository atributoRepository;
+  private final LimpiezaCatalogoService limpiezaCatalogoService;
 
   public ProductoService(
       ProductoRepository productoRepository,
       CategoriaRepository categoriaRepository,
-      AtributoRepository atributoRepository) {
+      AtributoRepository atributoRepository,
+      LimpiezaCatalogoService limpiezaCatalogoService) {
 
     this.productoRepository = productoRepository;
     this.categoriaRepository = categoriaRepository;
     this.atributoRepository = atributoRepository;
+    this.limpiezaCatalogoService = limpiezaCatalogoService;
   }
 
   @Override
@@ -48,8 +52,7 @@ public class ProductoService implements IProductoService {
   @Override
   public Optional<ProductoResponseDTO> save(ProductoRequestDTO request) {
 
-    Optional<Categoria> categoria =
-        categoriaRepository.findById(request.getCategoriaId());
+    Optional<Categoria> categoria = categoriaRepository.findById(request.getCategoriaId());
 
     if (categoria.isEmpty()) {
       return Optional.empty();
@@ -64,8 +67,7 @@ public class ProductoService implements IProductoService {
     producto.setCategoria(categoria.get());
 
     if (request.getAtributoIds() != null) {
-      List<Atributo> atributos =
-          atributoRepository.findAllById(request.getAtributoIds());
+      List<Atributo> atributos = atributoRepository.findAllById(request.getAtributoIds());
 
       producto.setAtributos(atributos);
     }
@@ -76,21 +78,21 @@ public class ProductoService implements IProductoService {
   }
 
   @Override
+  @Transactional
   public Optional<ProductoResponseDTO> update(
       Long id,
       ProductoRequestDTO request) {
 
-    Optional<Producto> productoOptional =
-        productoRepository.findById(id);
+    Optional<Producto> productoOptional = productoRepository.findById(id);
 
-    Optional<Categoria> categoria =
-        categoriaRepository.findById(request.getCategoriaId());
+    Optional<Categoria> categoria = categoriaRepository.findById(request.getCategoriaId());
 
     if (productoOptional.isEmpty() || categoria.isEmpty()) {
       return Optional.empty();
     }
 
     Producto producto = productoOptional.get();
+    Long categoriaAnteriorId = producto.getCategoria().getId();
 
     producto.setNombre(request.getNombre());
     producto.setDescription(request.getDescription());
@@ -99,13 +101,17 @@ public class ProductoService implements IProductoService {
     producto.setCategoria(categoria.get());
 
     if (request.getAtributoIds() != null) {
-      List<Atributo> atributos =
-          atributoRepository.findAllById(request.getAtributoIds());
+      List<Atributo> atributos = atributoRepository.findAllById(request.getAtributoIds());
 
       producto.setAtributos(atributos);
     }
 
     Producto updated = productoRepository.save(producto);
+
+    // Si cambió de categoría, la vieja puede haber quedado sin productos.
+    if (!categoriaAnteriorId.equals(categoria.get().getId())) {
+      limpiezaCatalogoService.eliminarCategoriaSiQuedoVacia(categoriaAnteriorId);
+    }
 
     return Optional.of(ProductoMapper.toDTO(updated));
   }

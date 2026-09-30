@@ -73,6 +73,31 @@ export interface ValorAtributo {
   atributoNombre: string;
 }
 
+export interface AtributoSeleccionado {
+  atributoId?: number | null;
+  nuevoAtributo?: string;
+  valorAtributoId?: number | null;
+  nuevoValor?: string;
+}
+
+export interface ProductoAltaCompletaRequest {
+  departamentoId?: number | null;
+  nuevoDepartamento?: string;
+
+  categoriaId?: number | null;
+  nuevaCategoria?: string;
+
+  atributos: AtributoSeleccionado[];
+
+  nombre: string;
+  description: string;
+  precioBase: number;
+  activo: boolean;
+
+  sku: string;
+  precioExtra: number;
+  stock: number;
+}
 
 export interface VarianteListado {
   id: number;

@@ -1,10 +1,13 @@
 package aus.t4.paladins.gestorback.controller;
 
+import aus.t4.paladins.gestorback.dto.ProductoAltaCompletaRequestDTO;
 import aus.t4.paladins.gestorback.dto.VarianteFiltroDTO;
 import aus.t4.paladins.gestorback.dto.VarianteListadoDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoRequestDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoResponseDTO;
 import aus.t4.paladins.gestorback.service.IVarianteProductoService;
+import aus.t4.paladins.gestorback.service.ProductoAltaCompletaService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,11 +21,13 @@ import java.util.List;
 public class VarianteProductoController {
 
   private final IVarianteProductoService service;
+  private final ProductoAltaCompletaService altaCompletaService;
 
   public VarianteProductoController(
-      IVarianteProductoService service) {
+      IVarianteProductoService service, ProductoAltaCompletaService altaCompletaService) {
 
     this.service = service;
+    this.altaCompletaService = altaCompletaService;
   }
 
   @GetMapping
@@ -46,7 +51,7 @@ public class VarianteProductoController {
         .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     VarianteFiltroDTO filtro = new VarianteFiltroDTO(
         busqueda, departamentoId, precioMin, precioMax,
-      soloConStock, soloSinStock, esAdmin && Boolean.TRUE.equals(mostrarInactivos), ordenarPor);
+        soloConStock, soloSinStock, esAdmin && Boolean.TRUE.equals(mostrarInactivos), ordenarPor);
     return service.buscar(filtro);
   }
 
@@ -87,5 +92,11 @@ public class VarianteProductoController {
     }
 
     return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/alta-completa")
+  public ResponseEntity<VarianteProductoResponseDTO> altaCompleta(
+      @RequestBody ProductoAltaCompletaRequestDTO request) {
+    return ResponseEntity.ok(altaCompletaService.altaCompleta(request));
   }
 }

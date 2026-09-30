@@ -14,7 +14,8 @@ import {
   VarianteProductoResponse,
   VarianteListado,
   Atributo,
-  ValorAtributo
+  ValorAtributo,
+  ProductoAltaCompletaRequest
 } from '../models/producto.model';
 
 @Injectable({
@@ -136,6 +137,17 @@ export class ProductosService {
   eliminarProducto(id: number): Observable<void> {
   return this.http.delete<void>(
     `${this.apiUrl}/productos/${id}`
+    );
+  }
+
+  eliminarVariante(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/variantes/${id}`);
+  }
+
+  altaCompleta(request: ProductoAltaCompletaRequest): Observable<VarianteProductoResponse> {
+    return this.http.post<VarianteProductoResponse>(
+      `${this.apiUrl}/variantes/alta-completa`,
+      request
     );
   }
 }
