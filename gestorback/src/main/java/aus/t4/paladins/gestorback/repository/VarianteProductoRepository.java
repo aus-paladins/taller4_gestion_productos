@@ -48,4 +48,6 @@ public interface VarianteProductoRepository
       @Param("soloConStock") Boolean soloConStock,
       @Param("soloSinStock") Boolean soloSinStock,
       @Param("mostrarInactivos") Boolean mostrarInactivos);
+
+  long countByProductoId(Long productoId);
 }

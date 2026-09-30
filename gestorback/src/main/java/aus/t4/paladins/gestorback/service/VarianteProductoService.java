@@ -5,13 +5,17 @@ import aus.t4.paladins.gestorback.dto.VarianteListadoDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoRequestDTO;
 import aus.t4.paladins.gestorback.dto.VarianteProductoResponseDTO;
 import aus.t4.paladins.gestorback.mapper.VarianteProductoMapper;
+import aus.t4.paladins.gestorback.model.Categoria;
 import aus.t4.paladins.gestorback.model.Producto;
 import aus.t4.paladins.gestorback.model.ValorAtributo;
 import aus.t4.paladins.gestorback.model.VarianteProducto;
+import aus.t4.paladins.gestorback.repository.CategoriaRepository;
+import aus.t4.paladins.gestorback.repository.DepartamentoRepository;
 import aus.t4.paladins.gestorback.repository.ProductoRepository;
 import aus.t4.paladins.gestorback.repository.ValorAtributoRepository;
 import aus.t4.paladins.gestorback.repository.VarianteProductoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -23,15 +27,21 @@ public class VarianteProductoService implements IVarianteProductoService {
   private final VarianteProductoRepository repository;
   private final ProductoRepository productoRepository;
   private final ValorAtributoRepository valorAtributoRepository;
+  private final CategoriaRepository categoriaRepository;
+  private final DepartamentoRepository departamentoRepository;
 
   public VarianteProductoService(
       VarianteProductoRepository repository,
       ProductoRepository productoRepository,
-      ValorAtributoRepository valorAtributoRepository) {
+      ValorAtributoRepository valorAtributoRepository,
+      CategoriaRepository categoriaRepository,
+      DepartamentoRepository departamentoRepository) {
 
     this.repository = repository;
     this.productoRepository = productoRepository;
     this.valorAtributoRepository = valorAtributoRepository;
+    this.categoriaRepository = categoriaRepository;
+    this.departamentoRepository = departamentoRepository;
   }
 
   @Override
@@ -144,13 +154,51 @@ public class VarianteProductoService implements IVarianteProductoService {
   }
 
   @Override
+  @Transactional
   public boolean deleteById(Long id) {
 
-    if (!repository.existsById(id)) {
+    VarianteProducto variante = repository.findById(id).orElse(null);
+    if (variante == null) {
       return false;
     }
 
+    Long productoId = variante.getProducto().getId();
+
     repository.deleteById(id);
+    eliminarProductoSiQuedoVacio(productoId);
     return true;
   }
+
+  private void eliminarProductoSiQuedoVacio(Long productoId) {
+    if (repository.countByProductoId(productoId) > 0) {
+      return; // todavía quedan variantes, no tocamos el producto
+    }
+
+    Producto producto = productoRepository.findById(productoId).orElseThrow();
+    Long categoriaId = producto.getCategoria().getId();
+
+    productoRepository.deleteById(productoId);
+
+    eliminarCategoriaSiQuedoVacia(categoriaId);
+  }
+
+  private void eliminarCategoriaSiQuedoVacia(Long categoriaId) {
+    if (productoRepository.countByCategoriaId(categoriaId) > 0) {
+      return;
+    }
+
+    Categoria categoria = categoriaRepository.findById(categoriaId).orElseThrow();
+    Long departamentoId = categoria.getDepartamento().getId();
+
+    categoriaRepository.deleteById(categoriaId);
+
+    eliminarDepartamentoSiQuedoVacio(departamentoId);
+  }
+
+  private void eliminarDepartamentoSiQuedoVacio(Long departamentoId) {
+    if (categoriaRepository.countByDepartamentoId(departamentoId) == 0) {
+      departamentoRepository.deleteById(departamentoId);
+    }
+  }
+
 }

@@ -58,7 +58,15 @@
           placeholder="Seleccione un departamento"
           fluid
           [invalid]="esInvalido('departamentoId')"
-        />
+          >
+          <ng-template #footer>
+            <div class="p-2">
+              <p-button type="button" label="Agregar departamento..." icon="pi pi-plus"
+                severity="secondary" variant="text" fluid
+                (onClick)="abrirDialogoDepartamento()" />
+            </div>
+          </ng-template>
+        </p-select>
 
         @if (esInvalido('departamentoId')) {
           <p-message
@@ -88,7 +96,16 @@
           placeholder="Seleccione una categoría"
           fluid
           [invalid]="esInvalido('categoriaId')"
-        />
+          >
+          <ng-template #footer>
+            <div class="p-2">
+              <p-button type="button" label="Agregar categoria..." icon="pi pi-plus"
+                severity="secondary" variant="text" fluid
+                (onClick)="abrirDialogoCategoria()" />
+            </div>
+          </ng-template>
+        </p-select>
+
 
         @if (esInvalido('categoriaId')) {
           <p-message
@@ -222,7 +239,16 @@
           formControlName="atributoIds"
           placeholder="Seleccionar atributos"
           fluid
-        />
+          >
+          <ng-template #footer>
+            <div class="p-2">
+              <p-button type="button" label="Agregar atributo..." icon="pi pi-plus"
+                severity="secondary" variant="text" fluid
+                (onClick)="abrirDialogoAtributo()" />
+            </div>
+          </ng-template>
+        </p-multiselect>
+
 
       </div>
 
@@ -258,7 +284,15 @@
             [ngModelOptions]="{ standalone: true }"
             placeholder="Seleccionar valor"
             fluid
-          />
+            >
+            <ng-template #footer>
+              <div class="p-2">
+                <p-button type="button" label="Agregar valor..." icon="pi pi-plus"
+                  severity="secondary" variant="text" fluid
+                  (onClick)="abrirDialogoValor(atributoId)" />
+              </div>
+            </ng-template>
+          </p-select>
 
         </div>
 
@@ -396,5 +430,43 @@
       </div>
   }
   </form>
+
+
+  <!-- Dialogos -->
+  <p-dialog header="Agregar departamento" [(visible)]="mostrarDialogoDepartamento" [modal]="true" [style]="{width: '400px'}">
+    <label>Nombre</label>
+    <input pInputText [(ngModel)]="nuevoDepartamentoNombre" [ngModelOptions]="{standalone: true}" placeholder="Nombre del departamento" class="w-full" />
+    <div class="flex justify-content-end gap-2 mt-3">
+      <p-button label="Cancelar" severity="secondary" variant="text" (onClick)="mostrarDialogoDepartamento = false" />
+      <p-button label="Crear" icon="pi pi-check" (onClick)="confirmarNuevoDepartamento()" />
+    </div>
+  </p-dialog>
+
+  <p-dialog header="Agregar categoria" [(visible)]="mostrarDialogoCategoria" [modal]="true" [style]="{width: '400px'}">
+    <label>Nombre</label>
+    <input pInputText [(ngModel)]="nuevaCategoriaNombre" [ngModelOptions]="{standalone: true}" placeholder="Nombre de la categoria" class="w-full" />
+    <div class="flex justify-content-end gap-2 mt-3">
+      <p-button label="Cancelar" severity="secondary" variant="text" (onClick)="mostrarDialogoCategoria = false" />
+      <p-button label="Crear" icon="pi pi-check" (onClick)="confirmarNuevaCategoria()" />
+    </div>
+  </p-dialog>
+
+  <p-dialog header="Agregar atributo" [(visible)]="mostrarDialogoAtributo" [modal]="true" [style]="{width: '400px'}">
+    <label>Nombre</label>
+    <input pInputText [(ngModel)]="nuevoAtributoNombre" [ngModelOptions]="{standalone: true}" placeholder="Nombre del atributo" class="w-full" />
+    <div class="flex justify-content-end gap-2 mt-3">
+      <p-button label="Cancelar" severity="secondary" variant="text" (onClick)="mostrarDialogoAtributo = false" />
+      <p-button label="Crear" icon="pi pi-check" (onClick)="confirmarNuevoAtributo()" />
+    </div>
+  </p-dialog>
+
+  <p-dialog header="Agregar valor" [(visible)]="mostrarDialogoValor" [modal]="true" [style]="{width: '400px'}">
+    <label>Valor</label>
+    <input pInputText [(ngModel)]="nuevoValorTexto" [ngModelOptions]="{standalone: true}" placeholder="Ej: XXL" class="w-full" />
+    <div class="flex justify-content-end gap-2 mt-3">
+      <p-button label="Cancelar" severity="secondary" variant="text" (onClick)="mostrarDialogoValor = false" />
+      <p-button label="Crear" icon="pi pi-check" (onClick)="confirmarNuevoValor()" />
+    </div>
+  </p-dialog>
 
 </div>
