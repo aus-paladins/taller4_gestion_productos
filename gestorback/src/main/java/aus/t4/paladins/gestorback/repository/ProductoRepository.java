@@ -7,12 +7,13 @@ import java.util.Optional;
 
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
-    @Query("""
-        SELECT DISTINCT p
-        FROM Producto p
-        LEFT JOIN FETCH p.atributos
-        WHERE p.id = :id
-        """)
-    Optional<Producto> findByIdWithAtributos(Long id);
+  @Query("""
+      SELECT DISTINCT p
+      FROM Producto p
+      LEFT JOIN FETCH p.atributos
+      WHERE p.id = :id
+      """)
+  Optional<Producto> findByIdWithAtributos(Long id);
 
+  long countByCategoriaId(Long categoriaId);
 }

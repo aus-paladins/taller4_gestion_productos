@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
+
 import {
   Departamento,
   Categoria,
@@ -12,7 +14,8 @@ import {
   VarianteProductoResponse,
   VarianteListado,
   Atributo,
-  ValorAtributo
+  ValorAtributo,
+  ProductoAltaCompletaRequest
 } from '../models/producto.model';
 
 @Injectable({
@@ -22,7 +25,7 @@ export class ProductosService {
 
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://localhost:8080/api';
+  private readonly apiUrl = environment.apiUrl;
 
   obtenerDepartamentos(): Observable<Departamento[]> {
     return this.http.get<Departamento[]>(
@@ -36,13 +39,14 @@ export class ProductosService {
     );
   }
 
+  // Se reemplazan por "altaCompleta"
+  /*
   crearProducto(producto: ProductoRequest): Observable<ProductoResponse> {
     return this.http.post<ProductoResponse>(
       `${this.apiUrl}/productos`,
       producto
     );
   }
-
   crearVariante(
     variante: VarianteProductoRequest
   ): Observable<VarianteProductoResponse> {
@@ -51,6 +55,7 @@ export class ProductosService {
       variante
     );
   }
+  */
 
   obtenerAtributos(): Observable<Atributo[]> {
     return this.http.get<Atributo[]>(
@@ -119,23 +124,33 @@ export class ProductosService {
     );
   }
 
-  actualizarProducto(
-    id: number,
-    producto: ProductoRequest
-  ): Observable<ProductoResponse> {
+  actualizarProducto(id: number, producto: ProductoRequest): Observable<ProductoResponse> {
     return this.http.put<ProductoResponse>(
-      `${this.apiUrl}/productos/${id}`,
-      producto
+      `${this.apiUrl}/productos/${id}`, producto
     );
   }
 
-  actualizarVariante(
-    id: number,
-    variante: VarianteProductoRequest
-  ): Observable<VarianteProductoResponse> {
+  actualizarVariante(id: number, variante: VarianteProductoRequest): Observable<VarianteProductoResponse> {
     return this.http.put<VarianteProductoResponse>(
-      `${this.apiUrl}/variantes/${id}`,
-      variante
+      `${this.apiUrl}/variantes/${id}`, variante
+    );
+  }
+
+  // No lo utilizamos porque solo permitimos eliminar variantes
+  eliminarProducto(id: number): Observable<void> {
+  return this.http.delete<void>(
+    `${this.apiUrl}/productos/${id}`
+    );
+  }
+
+  eliminarVariante(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/variantes/${id}`);
+  }
+
+  altaCompleta(request: ProductoAltaCompletaRequest): Observable<VarianteProductoResponse> {
+    return this.http.post<VarianteProductoResponse>(
+      `${this.apiUrl}/variantes/alta-completa`,
+      request
     );
   }
 }

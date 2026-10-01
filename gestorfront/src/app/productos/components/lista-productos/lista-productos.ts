@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Subject, of } from 'rxjs';
 import { catchError, switchMap, takeUntil } from 'rxjs/operators';
@@ -9,6 +11,7 @@ import { catchError, switchMap, takeUntil } from 'rxjs/operators';
 import { VarianteListado } from '../../models/producto.model';
 import { ProductosService } from '../../services/productos.service';
 import { FiltrosVariantesService } from '../../services/filtros-variantes.service';
+import { AuthService } from '../../../auth/auth.service';
 
 interface GrupoDepartamento {
   departamentoId: number;
@@ -26,7 +29,9 @@ interface GrupoCategoria {
   imports: [
     ButtonModule,
     CurrencyPipe,
+    ConfirmDialogModule,
   ],
+  providers: [ConfirmationService],
   templateUrl: './lista-productos.html',
   styleUrl: './lista-productos.scss',
 })
@@ -35,6 +40,8 @@ export class ListaProductos implements OnInit {
   private router = inject(Router);
   private productosService = inject(ProductosService);
   private filtrosService = inject(FiltrosVariantesService);
+  private confirmationService = inject(ConfirmationService);
+  readonly auth = inject(AuthService);
 
   // Angular exige que toObservable() (como inject()) se ejecute en un contexto
   // de inyección: constructor, field initializer, o runInInjectionContext(...).
@@ -80,6 +87,26 @@ export class ListaProductos implements OnInit {
     this.router.navigate(['/productos/editar', producto.productoId, producto.id]);
   }
 
+  eliminarProducto(variante: VarianteListado): void {
+    this.confirmationService.confirm({
+      message: '¿Estás seguro de que quieres eliminar este producto?',
+      header: 'Confirmar Eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí',
+      rejectLabel: 'No',
+      accept: () => {
+        this.productosService.eliminarVariante(variante.id).subscribe({
+          next: () => {
+            this.filtrosService.refrescar();
+          },
+          error: (error) => {
+            console.error('Error al eliminar producto:', error);
+          }
+        });
+      }
+    });
+  }
+
   private agruparPorDepartamentoYCategoria(
     productos: VarianteListado[]
   ): GrupoDepartamento[] {
@@ -115,7 +142,15 @@ export class ListaProductos implements OnInit {
       categoria.items.push(producto);
     }
 
-    return Array.from(departamentos.values());
+    const grupos = Array.from(departamentos.values());
+
+    grupos.sort((a, b) => a.departamentoNombre.localeCompare(b.departamentoNombre));
+
+    for (const departamento of grupos) {
+      departamento.categorias.sort((a, b) => a.categoriaNombre.localeCompare(b.categoriaNombre));
+    }
+
+    return grupos;
   }
 }
 

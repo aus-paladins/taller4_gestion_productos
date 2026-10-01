@@ -1,15 +1,20 @@
 import { Routes } from '@angular/router';
-import { AltaProducto } from './productos/components/alta-producto/alta-producto';
+import { adminGuard } from './auth/admin.guard';
 
 export const routes: Routes = [
+  { path: '', loadComponent: () => import('./auth/auth-page').then(module => module.AuthPage) },
+  { path: 'login', loadComponent: () => import('./auth/auth-page').then(module => module.AuthPage) },
+  { path: 'register', loadComponent: () => import('./auth/auth-page').then(module => module.AuthPage) },
+  { path: 'productos', loadComponent: () => import('./productos/components/dashboard/dashboard').then(module => module.Dashboard), pathMatch: 'full' },
   {
     path: 'productos/nuevo',
-    component: AltaProducto
+    loadComponent: () => import('./productos/components/alta-producto/alta-producto').then(module => module.AltaProducto),
+    canActivate: [adminGuard]
   },
-
   {
     path: 'productos/editar/:productoId/:varianteId',
-    component: AltaProducto
-  }
-
+    loadComponent: () => import('./productos/components/alta-producto/alta-producto').then(module => module.AltaProducto),
+    canActivate: [adminGuard]
+  },
+  { path: '**', redirectTo: '' }
 ];

@@ -13,6 +13,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { MessageModule } from 'primeng/message';
+import { DialogModule } from 'primeng/dialog';
 
 import {
   Departamento,
@@ -20,7 +21,9 @@ import {
   ProductoRequest,
   VarianteProductoRequest,
   Atributo,
-  ValorAtributo
+  ValorAtributo,
+  ProductoAltaCompletaRequest,
+  AtributoSeleccionado
 } from '../../models/producto.model';
 
 import { ProductosService } from '../../services/productos.service';
@@ -35,7 +38,8 @@ import { ProductosService } from '../../services/productos.service';
     InputNumberModule,
     SelectModule,
     MultiSelectModule,
-    MessageModule
+    MessageModule,
+    DialogModule
   ],
   templateUrl: './alta-producto.html',
   styleUrl: './alta-producto.scss',
@@ -65,6 +69,23 @@ export class AltaProducto implements OnInit {
   errorCreacion = false;
 
   productoCreado = false;
+
+
+  private proximoIdTemporal = -1;
+  pendientesDepartamento = new Map<number, string>();
+  pendientesCategoria = new Map<number, string>();
+  pendientesAtributo = new Map<number, string>();
+  pendientesValor = new Map<number, { valor: string; atributoId: number }>();
+  mostrarDialogoDepartamento = false;
+  nuevoDepartamentoNombre = '';
+  mostrarDialogoCategoria = false;
+  nuevaCategoriaNombre = '';
+  mostrarDialogoAtributo = false;
+  nuevoAtributoNombre = '';
+  mostrarDialogoValor = false;
+  nuevoValorTexto = '';
+  atributoIdParaNuevoValor: number | null = null;
+
 
   productoForm = this.formBuilder.group({
 
@@ -293,32 +314,39 @@ export class AltaProducto implements OnInit {
 
     const valores = this.productoForm.getRawValue();
 
-    const producto: ProductoRequest = {
-      nombre: valores.nombre!,
-      description: valores.description!,
-      precioBase: valores.precioBase!,
-      activo: valores.activo!,
-      categoriaId: valores.categoriaId!,
-      atributoIds: valores.atributoIds ?? []
-    };
-
-    // -------------------------
-    // EDICIÓN
-    // -------------------------
-
     if (this.modoEdicion) {
+      const producto: ProductoRequest = {
+        nombre: valores.nombre!,
+        description: valores.description!,
+        precioBase: valores.precioBase!,
+        activo: valores.activo!,
+        categoriaId: valores.categoriaId!,
+        atributoIds: valores.atributoIds ?? []
+      };
       this.actualizarProductoYVariante(producto);
       return;
     }
 
     // -------------------------
-    // CREACIÓN
+    // EDICIÓN
     // -------------------------
 
-    this.productosService.crearProducto(producto).subscribe({
-      next: (productoCreado) => {
-        console.log('Producto creado:', productoCreado);
-        this.crearVariante(productoCreado.id);
+    //if (this.modoEdicion) {
+    //  this.actualizarProductoYVariante(producto);
+    //  return;
+    //}
+
+    // -------------------------
+    // CREACIÓN: un solo POST transaccional
+    // -------------------------
+    const request = this.armarPayloadAltaCompleta();
+
+    this.productosService.altaCompleta(request).subscribe({
+      next: (varianteCreada) => {
+        console.log('Producto creado:', varianteCreada); // productoCreado);
+        this.productoCreado = true;
+        this.limpiarFormulario();
+        //this.crearVariante(productoCreado.id);
       },
 
       error: (error) => {
@@ -328,6 +356,59 @@ export class AltaProducto implements OnInit {
     });
   }
 
+
+  private armarPayloadAltaCompleta(): ProductoAltaCompletaRequest {
+    const valores = this.productoForm.getRawValue();
+
+    const atributos: AtributoSeleccionado[] = Object.entries(this.valoresSeleccionados)
+      .filter(([, valorId]) => valorId !== null)
+      .map(([atributoIdStr, valorId]) => ({
+        ...this.resolverAtributoParaPayload(Number(atributoIdStr)),
+        ...this.resolverValorParaPayload(valorId as number)
+      }));
+
+    return {
+      ...this.resolverDepartamentoParaPayload(valores.departamentoId!),
+      ...this.resolverCategoriaParaPayload(valores.categoriaId!),
+      atributos,
+      nombre: valores.nombre!,
+      description: valores.description!,
+      precioBase: valores.precioBase!,
+      activo: valores.activo!,
+      sku: valores.sku!,
+      precioExtra: valores.precioExtra!,
+      stock: valores.stock!
+    };
+  }
+
+  // Un id negativo es "pendiente" (todavía no existe en el backend);
+  // uno positivo es un id real que ya viene de la base.
+  private resolverDepartamentoParaPayload(id: number) {
+    return id < 0
+      ? { nuevoDepartamento: this.pendientesDepartamento.get(id) }
+      : { departamentoId: id };
+  }
+
+  private resolverCategoriaParaPayload(id: number) {
+    return id < 0
+      ? { nuevaCategoria: this.pendientesCategoria.get(id) }
+      : { categoriaId: id };
+  }
+
+  private resolverAtributoParaPayload(id: number) {
+    return id < 0
+      ? { nuevoAtributo: this.pendientesAtributo.get(id) }
+      : { atributoId: id };
+  }
+
+  private resolverValorParaPayload(id: number) {
+    return id < 0
+      ? { nuevoValor: this.pendientesValor.get(id)?.valor }
+      : { valorAtributoId: id };
+  }
+
+
+  /*
   private crearVariante(productoId: number): void {
     const valores = this.productoForm.getRawValue();
 
@@ -357,6 +438,7 @@ export class AltaProducto implements OnInit {
       }
     });
   }
+  */
 
   private actualizarVariante(): void {
     if (this.varianteId === null || this.productoId === null) {
@@ -426,7 +508,7 @@ export class AltaProducto implements OnInit {
   }
 
   cancelar(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/productos']);
   }
 
   esInvalido(campo: string): boolean {
@@ -437,5 +519,96 @@ export class AltaProducto implements OnInit {
       control.invalid &&
       (control.touched || control.dirty)
     );
+  }
+
+  abrirDialogoDepartamento(): void {
+    this.nuevoDepartamentoNombre = '';
+    this.mostrarDialogoDepartamento = true;
+  }
+
+  confirmarNuevoDepartamento(): void {
+    const nombre = this.nuevoDepartamentoNombre.trim();
+    if (!nombre) return;
+
+    const idTemporal = this.proximoIdTemporal--;
+    this.pendientesDepartamento.set(idTemporal, nombre);
+
+    // Se agrega a la MISMA lista que alimenta el <p-select>, para que
+    // aparezca mezclado con los reales sin tocar el resto del template.
+    this.departamentos = [...this.departamentos, { id: idTemporal, nombre: `${nombre} (nuevo)` }];
+
+    this.productoForm.get('departamentoId')?.setValue(idTemporal);
+    this.mostrarDialogoDepartamento = false;
+  }
+
+  abrirDialogoCategoria(): void {
+    this.nuevaCategoriaNombre = '';
+    this.mostrarDialogoCategoria = true;
+  }
+
+  confirmarNuevaCategoria(): void {
+    const nombre = this.nuevaCategoriaNombre.trim();
+    const departamentoId = this.productoForm.get('departamentoId')?.value;
+
+    if (!nombre || departamentoId == null) return; // hace falta el departamento primero
+
+    const idTemporal = this.proximoIdTemporal--;
+    this.pendientesCategoria.set(idTemporal, nombre);
+
+    const nuevaCategoria: Categoria = {
+      id: idTemporal,
+      nombre: `${nombre} (nueva)`,
+      departamentoId,
+      departamentoNombre: ''
+    };
+
+    this.categorias = [...this.categorias, nuevaCategoria];
+    this.filtrarCategorias(departamentoId); // para que aparezca ya en categoriasFiltradas
+
+    this.productoForm.get('categoriaId')?.setValue(idTemporal);
+    this.mostrarDialogoCategoria = false;
+  }
+
+  abrirDialogoAtributo(): void {
+    this.nuevoAtributoNombre = '';
+    this.mostrarDialogoAtributo = true;
+  }
+
+  confirmarNuevoAtributo(): void {
+    const nombre = this.nuevoAtributoNombre.trim();
+    if (!nombre) return;
+
+    const idTemporal = this.proximoIdTemporal--;
+    this.pendientesAtributo.set(idTemporal, nombre);
+
+    this.atributos = [...this.atributos, { id: idTemporal, nombre: `${nombre} (nuevo)` }];
+
+    const actuales = this.productoForm.get('atributoIds')?.value ?? [];
+    this.productoForm.get('atributoIds')?.setValue([...actuales, idTemporal]);
+
+    this.mostrarDialogoAtributo = false;
+  }
+
+  abrirDialogoValor(atributoId: number): void {
+    this.nuevoValorTexto = '';
+    this.atributoIdParaNuevoValor = atributoId;
+    this.mostrarDialogoValor = true;
+  }
+
+  confirmarNuevoValor(): void {
+    const valor = this.nuevoValorTexto.trim();
+    const atributoId = this.atributoIdParaNuevoValor;
+    if (!valor || atributoId === null) return;
+
+    const idTemporal = this.proximoIdTemporal--;
+    this.pendientesValor.set(idTemporal, { valor, atributoId });
+
+    this.valoresAtributo = [
+      ...this.valoresAtributo,
+      { id: idTemporal, valor: `${valor} (nuevo)`, atributoId, atributoNombre: this.nombreAtributo(atributoId) }
+    ];
+
+    this.valoresSeleccionados[atributoId] = idTemporal;
+    this.mostrarDialogoValor = false;
   }
 }

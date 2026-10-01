@@ -30,9 +30,9 @@ public interface VarianteProductoRepository
       JOIN FETCH c.departamento d
       LEFT JOIN FETCH v.valoresAtributo va
         LEFT JOIN FETCH va.atributo
-        WHERE (:busqueda IS NULL
-            OR LOWER(v.sku) LIKE LOWER(CONCAT('%', :busqueda, '%'))
-            OR LOWER(p.nombre) LIKE LOWER(CONCAT('%', :busqueda, '%')))
+        WHERE (COALESCE(:busqueda, '') = ''
+            OR LOWER(v.sku) LIKE LOWER(CONCAT('%', COALESCE(:busqueda, ''), '%'))
+            OR LOWER(p.nombre) LIKE LOWER(CONCAT('%', COALESCE(:busqueda, ''), '%')))
           AND (:departamentoId IS NULL OR d.id = :departamentoId)
           AND (:precioMin IS NULL OR (p.precioBase + COALESCE(v.precioExtra, 0)) >= :precioMin)
           AND (:precioMax IS NULL OR (p.precioBase + COALESCE(v.precioExtra, 0)) <= :precioMax)
@@ -48,4 +48,6 @@ public interface VarianteProductoRepository
       @Param("soloConStock") Boolean soloConStock,
       @Param("soloSinStock") Boolean soloSinStock,
       @Param("mostrarInactivos") Boolean mostrarInactivos);
+
+  long countByProductoId(Long productoId);
 }

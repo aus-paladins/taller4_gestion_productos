@@ -1,17 +1,19 @@
 <div class="inventario-container">
-
+  <p-confirmdialog></p-confirmdialog>
   <header class="inventario-header">
     <div>
       <h2>Inventario General</h2>
       <p class="subtitulo">Gestiona tus productos y variantes</p>
     </div>
 
-    <p-button
-      label="Nuevo Producto"
-      icon="pi pi-plus"
-      styleClass="btn-nuevo-producto"
-      (onClick)="nuevoProducto()">
-    </p-button>
+    @if (auth.esAdmin()) {
+      <p-button
+        label="Nuevo Producto"
+        icon="pi pi-plus"
+        styleClass="btn-nuevo-producto"
+        (onClick)="nuevoProducto()">
+      </p-button>
+    }
   </header>
 
   @if (cargando) {
@@ -51,7 +53,7 @@
                     <th>Atributos</th>
                     <th>Stock</th>
                     <th>Precio Unit.</th>
-                    <th>Acciones</th>
+                    @if (auth.esAdmin()) { <th>Acciones</th> }
                   </tr>
                 </thead>
 
@@ -79,24 +81,20 @@
                         {{ producto.precio | currency }}
                       </td>
 
-                      <td class="acciones">
-                        <button
-                          class="btn-icono editar"
-                          title="Editar"
-                          (click)="editarProducto(producto)">
-                          <i class="pi pi-pencil"></i>
-                        </button>
-
-                        <button
-                          class="btn-icono borrar"
-                          title="Eliminar">
-                          <i class="pi pi-trash"></i>
-                        </button>
-                      </td>
+                      @if (auth.esAdmin()) {
+                        <td class="acciones">
+                          <button class="btn-icono editar" title="Editar" (click)="editarProducto(producto)">
+                            <i class="pi pi-pencil"></i>
+                          </button>
+                          <button class="btn-icono borrar" title="Eliminar" (click)="eliminarProducto(producto)">
+                            <i class="pi pi-trash"></i>
+                          </button>
+                        </td>
+                      }
                     </tr>
                   } @empty {
                     <tr>
-                      <td colspan="6" style="text-align: center; padding: 2rem;">
+                      <td [attr.colspan]="auth.esAdmin() ? 6 : 5" style="text-align: center; padding: 2rem;">
                         No hay productos registrados en esta categoría.
                       </td>
                     </tr>

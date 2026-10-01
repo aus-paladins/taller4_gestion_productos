@@ -73,19 +73,32 @@ export interface ValorAtributo {
   atributoNombre: string;
 }
 
-
-export interface VarianteListado {
-  id: number;
-  sku: string;
-  nombre: string;
-  departamentoId: number;
-  departamentoNombre: string;
-  categoriaId: number;
-  categoriaNombre: string;
-  atributos: string[];
-  stock: number;
-  precio: number;
+export interface AtributoSeleccionado {
+  atributoId?: number | null;
+  nuevoAtributo?: string;
+  valorAtributoId?: number | null;
+  nuevoValor?: string;
 }
+
+export interface ProductoAltaCompletaRequest {
+  departamentoId?: number | null;
+  nuevoDepartamento?: string;
+
+  categoriaId?: number | null;
+  nuevaCategoria?: string;
+
+  atributos: AtributoSeleccionado[];
+
+  nombre: string;
+  description: string;
+  precioBase: number;
+  activo: boolean;
+
+  sku: string;
+  precioExtra: number;
+  stock: number;
+}
+
 
 //Todos los campos son opcionales
 export interface FiltroVariantes {

@@ -1,7 +1,13 @@
 erDiagram
+  DEPARTAMENTO {
+    int id PK
+    string nombre
+  }
+
   CATEGORIA {
     int id PK
     string nombre
+    int departamento_id FK
   }
 
   PRODUCTO {
@@ -42,6 +48,14 @@ erDiagram
     int valor_atributo_id FK
   }
 
+  USUARIO {
+    int id PK
+    string username UK
+    string password "hash BCrypt"
+    string rol "ADMIN | INVITADO"
+  }
+
+  DEPARTAMENTO ||--o{ CATEGORIA : "agrupa"
   CATEGORIA ||--o{ PRODUCTO : "tiene"
   PRODUCTO ||--o{ PRODUCTO_ATRIBUTO : "define"
   ATRIBUTO ||--o{ PRODUCTO_ATRIBUTO : "se usa en"
