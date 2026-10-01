@@ -37,10 +37,14 @@ Sistema de gestión de inventario con productos, variantes (talle/color/etc.), a
 2. Levantar la base de datos
 ```bash
 docker compose up -d
+# Para ejecutar nuevamente el DataInitializer, borrar el volumen y levantar nuevamente
+docker compose down -v
+docker compose up -d
 ```
 3. Levantar backend desde Maven (Spring Boot):
 ```bash
 cd gestorback
+mvn clean compile
 ./mvnw spring-boot:run
 ```
 4. Levantar el frontend (Angular)
@@ -55,71 +59,6 @@ npm start
 La consigna pedía un sistema de gestión con backend y frontend, ORM, seguridad JWT, y al menos dos roles (`admin` / `guest`), manteniendo el modelo enfocado ("5-7 entidades"). El proyecto quedó con **7 entidades** (`Departamento`, `Categoria`, `Producto`, `VarianteProducto`, `Atributo`, `ValorAtributo`, `Usuario`), justo en ese rango.
 
 La decisión de modelado central fue distinguir **Producto** (lo conceptual: "Remera Básica", con nombre, descripción y precio base) de **VarianteProducto** (lo vendible: "Remera Básica, Talle M, Azul", con su propio SKU, stock y precio). Un producto define qué atributos aplican (Talle, Color) y cada variante fija un valor concreto para cada uno.
-
-## Modelo de dominio
-
-```mermaid
-erDiagram
-  DEPARTAMENTO {
-    int id PK
-    string nombre
-  }
-
-  CATEGORIA {
-    int id PK
-    string nombre
-    int departamento_id FK
-  }
-
-  PRODUCTO {
-    int id PK
-    string nombre
-    text descripcion
-    decimal precio_base
-    int categoria_id FK
-    bool activo
-  }
-
-  ATRIBUTO {
-    int id PK
-    string nombre
-  }
-
-  VALOR_ATRIBUTO {
-    int id PK
-    int atributo_id FK
-    string valor
-  }
-
-  VARIANTE_PRODUCTO {
-    int id PK
-    int producto_id FK
-    string sku
-    decimal precio_extra
-    int stock
-  }
-
-  VARIANTE_VALOR {
-    int variante_id FK
-    int valor_atributo_id FK
-  }
-
-  USUARIO {
-    int id PK
-    string username
-    string password
-    string rol
-  }
-
-  DEPARTAMENTO ||--o{ CATEGORIA : "agrupa"
-  CATEGORIA ||--o{ PRODUCTO : "tiene"
-  PRODUCTO ||--o{ VARIANTE_PRODUCTO : "genera"
-  VARIANTE_PRODUCTO ||--o{ VARIANTE_VALOR : "compuesta por"
-  VALOR_ATRIBUTO ||--o{ VARIANTE_VALOR : "define"
-  ATRIBUTO ||--o{ VALOR_ATRIBUTO : "tiene"
-```
-
-`USUARIO` no tiene relación con el resto del modelo: es la entidad de autenticación (`rol` es `ADMIN` o `INVITADO`), separada del dominio de catálogo a propósito.
 
 
 ## Arquitectura del backend

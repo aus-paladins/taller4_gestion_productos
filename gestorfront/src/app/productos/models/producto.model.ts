@@ -99,18 +99,6 @@ export interface ProductoAltaCompletaRequest {
   stock: number;
 }
 
-export interface VarianteListado {
-  id: number;
-  sku: string;
-  nombre: string;
-  departamentoId: number;
-  departamentoNombre: string;
-  categoriaId: number;
-  categoriaNombre: string;
-  atributos: string[];
-  stock: number;
-  precio: number;
-}
 
 //Todos los campos son opcionales
 export interface FiltroVariantes {

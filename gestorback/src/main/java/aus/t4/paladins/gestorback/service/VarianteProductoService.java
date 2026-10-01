@@ -174,7 +174,7 @@ public class VarianteProductoService implements IVarianteProductoService {
 
     productoRepository.deleteById(productoId);
 
-    LimpiezaCatalogoService.eliminarCategoriaSiQuedoVacia(categoriaId);
+    limpiezaCatalogoService.eliminarCategoriaSiQuedoVacia(categoriaId);
   }
 
 }

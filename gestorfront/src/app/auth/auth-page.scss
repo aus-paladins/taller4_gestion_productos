@@ -9,16 +9,15 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: #f3f4f2;
-  color: #202321;
+  background: var(--p-surface-50);
 }
 
 .auth-card {
   width: min(100%, 380px);
   padding: 2rem;
-  border: 1px solid #dfe2dd;
-  border-radius: 6px;
-  background: #fff;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: var(--p-content-border-radius);
+  background: var(--p-content-background);
   box-shadow: 0 8px 24px rgb(28 39 32 / 5%);
 }
 
@@ -30,15 +29,15 @@
 
 .auth-card form { display: flex; flex-direction: column; }
 .auth-card label { margin: 1rem 0 0.45rem; font-size: 0.86rem; font-weight: 650; }
-.auth-card input { width: 100%; min-height: 46px; padding: 0.7rem 0.8rem; border: 1px solid #cfd4ce; border-radius: 4px; background: #fff; color: #202321; font: inherit; }
-.auth-card input:focus { outline: 2px solid #527a68; outline-offset: 1px; border-color: transparent; }
-.field-error, .form-error { color: #a33c2a; font-size: 0.78rem; }
-.form-error { margin: 1rem 0 0; }
-.submit-button { min-height: 46px; margin-top: 1.5rem; padding: 0 1rem; border: 0; border-radius: 4px; background: #315d4b; color: white; font: inherit; font-weight: 650; cursor: pointer; }
-.submit-button:hover:not(:disabled) { background: #264a3b; }
-.submit-button:disabled { cursor: wait; opacity: 0.7; }
-.switch-mode { margin: 1.25rem 0 0; color: #626b65; font-size: 0.86rem; text-align: center; }
-.switch-mode a { color: #315d4b; font-weight: 650; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+//.auth-card input { width: 100%; min-height: 46px; padding: 0.7rem 0.8rem; border: 1px solid #cfd4ce; border-radius: 4px; background: #fff; color: #202321; font: inherit; }
+//.auth-card input:focus { outline: 2px solid #527a68; outline-offset: 1px; border-color: transparent; }
+.field-error { margin-top: 0.35rem; font-size: 0.78rem; }
+//.form-error { margin: 1rem 0 0; }
+.submit-button { margin-top: 1.5rem }
+//.submit-button:hover:not(:disabled) { background: #264a3b; }
+//.submit-button:disabled { cursor: wait; opacity: 0.7; }
+.switch-mode { margin: 1.25rem 0 0; color: var(--p-text-muted-color); font-size: 0.86rem; text-align: center; }
+.switch-mode a { color: var(--p-primary-color); font-weight: 650; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 
 @media (max-width: 480px) {
   .auth-shell { padding: 1rem; }

@@ -39,13 +39,14 @@ export class ProductosService {
     );
   }
 
+  // Se reemplazan por "altaCompleta"
+  /*
   crearProducto(producto: ProductoRequest): Observable<ProductoResponse> {
     return this.http.post<ProductoResponse>(
       `${this.apiUrl}/productos`,
       producto
     );
   }
-
   crearVariante(
     variante: VarianteProductoRequest
   ): Observable<VarianteProductoResponse> {
@@ -54,6 +55,7 @@ export class ProductosService {
       variante
     );
   }
+  */
 
   obtenerAtributos(): Observable<Atributo[]> {
     return this.http.get<Atributo[]>(
@@ -134,6 +136,7 @@ export class ProductosService {
     );
   }
 
+  // No lo utilizamos porque solo permitimos eliminar variantes
   eliminarProducto(id: number): Observable<void> {
   return this.http.delete<void>(
     `${this.apiUrl}/productos/${id}`

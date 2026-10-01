@@ -4,24 +4,24 @@
 
     <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
       <label for="username">Usuario</label>
-      <input id="username" type="text" formControlName="username" autocomplete="username" placeholder="Usuario">
+      <input pInputText id="username" type="text" formControlName="username" autocomplete="username" placeholder="Usuario" fluid>
       @if (form.controls.username.touched && form.controls.username.invalid) {
         <small class="field-error">Usá entre 3 y 80 caracteres.</small>
       }
 
       <label for="password">Contraseña</label>
-      <input id="password" type="password" formControlName="password" [autocomplete]="esRegistro ? 'new-password' : 'current-password'" placeholder="Contraseña">
+      <input pInputText id="password" type="password" formControlName="password" [autocomplete]="esRegistro ? 'new-password' : 'current-password'" placeholder="Contraseña" fluid>
       @if (form.controls.password.touched && form.controls.password.invalid) {
         <small class="field-error">La contraseña debe tener al menos 8 caracteres.</small>
       }
 
       @if (error) {
-        <p class="form-error" role="alert">{{ error }}</p>
+        <p-message severiy="error" variante="simple" size="small">{{ error }}</p-message>
       }
 
-      <button class="submit-button" type="submit" [disabled]="cargando">
-        {{ cargando ? 'Un momento…' : esRegistro ? 'Crear cuenta' : 'Entrar' }}
-      </button>
+      <p-button class="submit-button" type="submit"
+        [label]="cargando ? 'Un momento…' : esRegistro ? 'Crear cuenta' : 'Entrar'"
+        [loading]="cargando" fluid/>
     </form>
 
     <p class="switch-mode">
