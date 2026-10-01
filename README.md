@@ -60,6 +60,31 @@ La consigna pedía un sistema de gestión con backend y frontend, ORM, seguridad
 
 La decisión de modelado central fue distinguir **Producto** (lo conceptual: "Remera Básica", con nombre, descripción y precio base) de **VarianteProducto** (lo vendible: "Remera Básica, Talle M, Azul", con su propio SKU, stock y precio). Un producto define qué atributos aplican (Talle, Color) y cada variante fija un valor concreto para cada uno.
 
+## Resumen arquitectónico
+
+```mermaid
+flowchart TB
+    U[Usuario]
+
+    U --> AUTH[Autenticación JWT]
+    U --> CAT[Consulta del catálogo]
+    U --> ADM[Operaciones ADMIN]
+
+    AUTH --> JWT[JWT + SecurityContext]
+
+    CAT --> LIST[GET /api/variantes/listado]
+    LIST --> DB[(Base de datos)]
+
+    ADM --> ALTA[Alta completa]
+    ADM --> EDIT[Edición]
+    ADM --> DEL[Eliminación]
+
+    ALTA --> TX["@Transactional"]
+    TX --> NEW[Departamento / Categoría /\nAtributos / Producto / Variante]
+
+    DEL --> TY["@Transactional"]
+    TY --> UP[Variante → Producto → Categoría → Departamento]
+```
 
 ## Arquitectura del backend
 

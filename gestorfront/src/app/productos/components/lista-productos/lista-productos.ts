@@ -87,7 +87,7 @@ export class ListaProductos implements OnInit {
     this.router.navigate(['/productos/editar', producto.productoId, producto.id]);
   }
 
-  eliminarProducto(producto: VarianteListado): void {
+  eliminarProducto(variante: VarianteListado): void {
     this.confirmationService.confirm({
       message: '¿Estás seguro de que quieres eliminar este producto?',
       header: 'Confirmar Eliminación',
@@ -95,7 +95,7 @@ export class ListaProductos implements OnInit {
       acceptLabel: 'Sí',
       rejectLabel: 'No',
       accept: () => {
-        this.productosService.eliminarVariante(producto.productoId).subscribe({
+        this.productosService.eliminarVariante(variante.id).subscribe({
           next: () => {
             this.filtrosService.refrescar();
           },
