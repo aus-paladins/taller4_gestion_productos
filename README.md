@@ -149,6 +149,7 @@ La tabla de productos se agrupa en dos niveles fijos — **Departamento** (secci
 ## Deudas técnicas
 
 - **Sin cobertura de tests real.** El backend solo tiene el smoke test por defecto (`GestorbackApplicationTests`, que verifica que el contexto de Spring levante). Los `.spec.ts` del frontend no están implementados y son los que genera Angular CLI al crear cada componente.
-
+- *Sin paginado en /api/variantes/listado.* Devuelve siempre el resultado filtrado completo. No es un problema con el volumen de datos actual (dataset de curso), pero no escala como está a un catálogo grande.
+- **Sin operaciones batch para la gestión del catálogo.** La webapp permite agregar y eliminar variantes individualmente, pero no dispone de operaciones por lotes para la carga o eliminación de productos, categorías y departamentos. Esto dificulta la carga inicial, migración o actualización masiva de un catálogo.
 
 
